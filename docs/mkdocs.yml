@@ -1,0 +1,5 @@
+site_name: Pizzoo
+nav:
+  - Home: index.md
+  - Getting started: started.md
+theme: readthedocs
