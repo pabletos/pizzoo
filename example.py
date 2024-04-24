@@ -2,7 +2,7 @@ from pizzoo import Pizzoo, WindowRenderer, ImageRenderer
 from time import sleep
 
 '''Create the main object and the connection to the Pixoo device'''
-pizzoo = Pizzoo('192.168.50.225', renderer=ImageRenderer, debug=True)
+pizzoo = Pizzoo('192.168.50.225', debug=True)
 pizzoo.switch(on=True) # Turn on the Pixoo device screen
 
 def example_draw_pixel():
@@ -86,6 +86,24 @@ def example_countdown():
 	sleep(5)
 	elapsed_time = pizzoo.stop_countdown() # Stops the countdown prematurely and returns the elapsed time
 	print(f'Elapsed time: {elapsed_time} seconds')
+
+def example_template():
+	'''
+	Render an XML template on the Pixoo device.
+	'''
+	pizzoo.load_font('amstrad', './files/amstrad_cpc_extended.bdf')
+	pizzoo.render_template('''
+		<pizzoo>
+			<section x="5" y="5" width="53" height="53">
+				<rectangle x="0" y="0" width="100%" height="100%" color="#FFFFFF" filled="true" />
+				<section x="1" y="1" width="51" height="51">
+					<text x="0" y="0" color="#000000" wrap="true">Long text that will be wrapped</text>
+					<text x="0" y="85%" color="#FF0000" font="amstrad">Cool</text>
+					<image x="16" y="50%" src="./files/test_image.png" />
+				</section>
+			</section>
+		</pizzoo>				
+	''')
 	
 def power_off():
 	'''
@@ -104,7 +122,8 @@ if __name__ == '__main__':
 		'5': {'Draw Gif': example_draw_gif},
 		'6': {'Scoreboard': example_scoreboard},
 		'7': {'Buzzer': example_buzzer},
-		'8': {'Countdown': example_countdown}
+		'8': {'Countdown': example_countdown},
+		'9': {'Render an XML template': example_template}
 	}
 	print('Select an example to run:')
 	for key, value in menu.items():

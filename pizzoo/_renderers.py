@@ -26,6 +26,9 @@ class Renderer:
 	def get_settings(self):
 		raise NotImplementedError
 	
+	def set_brightness(self, brightness):
+		raise NotImplementedError
+	
 	def switch(self, on=True):
 		raise NotImplementedError
 
@@ -148,6 +151,11 @@ class Pixoo64Renderer(Renderer):
 	def switch(self, on=True):
 		self.__request('Channel/OnOffScreen', {
 			'OnOff': 1 if on else 0
+		})
+
+	def set_brightness(self, brightness):
+		self.__request('Channel/SetBrightness', {
+			'Brightness': clamp(brightness, 0, 100)
 		})
 
 	def render(self, buffer, frame_speed):
