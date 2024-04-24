@@ -11,6 +11,7 @@ from time import time, sleep
 from xml.etree.ElementTree import ElementTree, fromstring
 from ._constants import PICO_PALETTE, DIAL_DEFAULT_ITEM
 from ._utils import clamp
+from ._renderers import Pixoo64Renderer, Renderer, ImageRenderer, WindowRenderer
 from os.path import dirname, realpath, join
 
 
@@ -18,33 +19,23 @@ class Pizzoo:
 	__buffer = []
 	__current_frame = -1
 	__max_frames = 60
-	__url = ''
-	__pic_id = 1
-	__id_limit = 100
 	__debug = False
 	__fonts = {}
 	__current_dir = dirname(realpath(__file__))
 
-	def __init__(self, address, device='pixoo64', debug=False):
-		self.__compute_device_specs(device)
-		self.__url = f'http://{address}/post'
-		self.__pic_id = self.__request('Draw/GetHttpGifId')['PicId']
-		if self.__pic_id > self.__id_limit:
-			self.__reset_pic_id()
+	def __init__(self, address, renderer=Pixoo64Renderer, renderer_params={}, debug=False):
+		self.renderer = renderer(address=address, debug=debug, **renderer_params)
+		self.__compute_device_specs()
 		self.__debug = debug
 		# Initialize buffer
 		self.add_frame()
 		# get current dir of this file:
 		self.load_font('default', join(self.__current_dir, 'MatrixLight6.bdf'), False)
 
-	def __compute_device_specs(self, device_type):
-		if device_type == 'pixoo64':
-			self.size = 64
-			self.pixel_count = self.size * self.size
-			self.__max_frames = 60
-			self.__id_limit = 100
-		else:
-			raise ValueError('Invalid device type')
+	def __compute_device_specs(self):
+		self.size = self.renderer.get_size()
+		self.pixel_count = self.size * self.size
+		self.__max_frames = self.renderer.get_max_frames()
 		
 	def load_font(self, font_name, path, soft=True):
 		'''
@@ -345,15 +336,7 @@ class Pizzoo:
 		Returns:
 		- None
 		'''
-		self.__pic_id += 1
-		if self.__pic_id >= self.__id_limit:
-			self.__reset_pic_id()
-		self.__buffer = self.__buffer[-60:]
-		# Because of a weird bug in the Pixoo64, we need to make sure the frame speed is not below 95 or greater than 280 (290 is the max speed)
-		# frame_speed = floor(clamp(frame_speed, 95, 280))
-		frame_speed = floor(clamp(frame_speed, 10, 10000))
-		for i, frame in enumerate(self.__buffer):
-			self.__send_frame(frame, speed=frame_speed, frame_number=len(self.__buffer), offset=i)
+		self.renderer.render(self.__buffer, frame_speed)
 		self.reset_buffer()
 
 	def set_dial(self, items, background=None, clear=True):
@@ -380,87 +363,17 @@ class Pizzoo:
 				self.draw_image(background)
 			self.render()
 		if clear:
-			self.clear_text()
+			self.clear_remote_text()
 		processed_items = [{'TextId': index + 1, **DIAL_DEFAULT_ITEM, **item} for index, item in enumerate(items)]
 		self.__request('Draw/SendHttpItemList', {
 			'ItemList': processed_items
 		})
-
-	def buzzer(self, active=0.5, inactive=0.5, duration=1):
-		'''
-		Plays a sound on the device buzzer.
-
-		Parameters:
-		- active (float): The time in seconds the buzzer is active.
-		- inactive (float): The time in seconds the buzzer is inactive.
-		- duration (float): The total time in seconds the buzzer will play.
-
-		Returns:
-		- None
-		'''
-		self.__request('Device/PlayBuzzer', {
-			'ActiveTimeInCycle': active * 1000,
-			'OffTimeInCycle': inactive * 1000,
-			'PlayTotalTime': duration * 1000
-		})
 	
-	def turn_screen(self, on=True):
+	def switch(self, on=True):
 		'''
-		Turns the device screen on or off.
+		Turns the device on or off.
 		'''
-		self.__request('Channel/OnOffScreen', {
-			'OnOff': 1 if on else 0
-		})
-	
-	def set_scoreboard(self, blue_score=0, red_score=0):
-		'''
-		Sets the scoreboard on the device for every team.
-
-		Parameters:
-		- blue_score (int): The score for the blue team.
-		- red_score (int): The score for the red team.
-
-		Returns:
-		- None
-		'''
-		self.__request('Tools/SetScoreBoard', {
-			'BlueScore': blue_score,
-			'RedScore': red_score
-		})
-
-	def start_countdown(self, seconds=0):
-		'''
-		Creates and starts the countdown timer on the device.
-
-		Parameters:
-		- seconds (int): The amount of seconds to countdown from.
-
-		Returns:
-		- None
-		'''
-		minutes = int(seconds / 60)
-		seconds = seconds % 60
-		self.__request('Tools/SetTimer', {
-			'Minute': minutes,
-			'Second': seconds,
-			'Status': 1
-		})
-		self.__start_countdown_time = time()
-
-	def stop_countdown(self):
-		'''
-		Stops the countdown timer on the device.
-
-		Parameters:
-		- None
-
-		Returns:
-		- int: Elapsed time in seconds
-		'''
-		self.__request('Tools/SetTimer', {
-			'Status': 0
-		})
-		return int(time() - self.__start_countdown_time)
+		self.renderer.switch(on)
 	
 	def get_settings(self):
 		'''
@@ -469,13 +382,7 @@ class Pizzoo:
 		Returns:
 		- dict: The current settings of the device.
 		'''
-		return self.__request('Channel/GetAllConf')
-	
-	def clear_remote_text(self):
-		'''
-		Clears the remote text on the device.
-		'''
-		return self.__request('Draw/ClearHttpText')
+		return self.renderer.get_settings()
 
 	def __get_color_rgb(self, color):
 		if isinstance(color, tuple):
@@ -485,29 +392,11 @@ class Pizzoo:
 		if isinstance(color, str) and color[0] == '#' and len(color) == 7:
 			return tuple(int(color[i:i+2], 16) for i in (1, 3, 5))
 		raise ValueError('Invalid color format')
+	
+	def __getattr__(self, name):
+		if hasattr(self.renderer, name) and callable(getattr(self.renderer, name)):
+			return getattr(self.renderer, name)
+		raise AttributeError(f"'{self.__class__.__name__}' object has no attribute '{name}'")
 
-	def __request(self, endpoint, data=None):
-		data = {'Command': endpoint, **(data if data else {})}
-		result = post(self.__url, json.dumps(data)).json()
-		if result['error_code'] != 0:
-			raise Exception(f'Error on request {endpoint} with code {result["error_message"]}')
-		return result
 
-	def __reset_pic_id(self):
-		try:
-			self.__request('Draw/ResetHttpGifId')
-			self.__pic_id = 1
-		except Exception as e:
-			if self.__debug: print(e)
-
-	def __send_frame(self, frame_data, speed=1000, frame_number=1, offset=0):
-		return self.__request('Draw/SendHttpGif', {
-			'PicNum': frame_number,
-			'PicWidth': self.size,
-			'PicOffset': offset,
-			'PicID': self.__pic_id,
-			'PicSpeed': speed,
-			'PicData': base64.b64encode(bytearray(frame_data)).decode()
-		})
-
-__all__ = (Pizzoo)
+__all__ = (Pizzoo, Renderer, ImageRenderer, WindowRenderer)

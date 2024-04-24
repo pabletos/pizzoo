@@ -1,8 +1,8 @@
-from pizzoo import Pizzoo
+from pizzoo import Pizzoo, WindowRenderer
 
 '''Create the main object and the connection to the Pixoo device'''
-pizzoo = Pizzoo('192.168.50.225', debug=True)
-pizzoo.turn_screen(on=True) # Turn on the Pixoo device screen
+pizzoo = Pizzoo('192.168.50.225', renderer=WindowRenderer, debug=True)
+pizzoo.switch(on=True) # Turn on the Pixoo device screen
 
 def example_draw_pixel():
 	'''
