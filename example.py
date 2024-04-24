@@ -1,7 +1,8 @@
-from pizzoo import Pizzoo, WindowRenderer
+from pizzoo import Pizzoo, WindowRenderer, ImageRenderer
+from time import sleep
 
 '''Create the main object and the connection to the Pixoo device'''
-pizzoo = Pizzoo('192.168.50.225', renderer=WindowRenderer, debug=True)
+pizzoo = Pizzoo('192.168.50.225', renderer=ImageRenderer, debug=True)
 pizzoo.switch(on=True) # Turn on the Pixoo device screen
 
 def example_draw_pixel():
@@ -95,27 +96,28 @@ def power_off():
 if __name__ == '__main__':
 	# create a terminal menu to select the example to run
 	selected_option = None
-	while selected_option != '0':
-		menu = {
-			'1': {'Draw Pixel': example_draw_pixel},
-			'2': {'Draw Shapes': example_draw_shapes},
-			'3': {'Draw Text': example_draw_text},
-			'4': {'Draw Image': example_draw_image},
-			'5': {'Draw Gif': example_draw_gif},
-			'6': {'Scoreboard': example_scoreboard},
-			'7': {'Buzzer': example_buzzer},
-			'8': {'Countdown': example_countdown}
-		}
-		print('Select an example to run:')
-		for key, value in menu.items():
-			print(f'{key}. {list(value.keys())[0]}')
-		print('0. Exit')
-		option = input('Option: ')
-		selected_option = option
-		if option in menu:
-			menu[option][list(menu[option].keys())[0]]()
-		elif option == '0':
-			print('Exiting...')
-			power_off()
-		else:
-			print('Invalid option, please try again.')
+	menu = {
+		'1': {'Draw Pixel': example_draw_pixel},
+		'2': {'Draw Shapes': example_draw_shapes},
+		'3': {'Draw Text': example_draw_text},
+		'4': {'Draw Image': example_draw_image},
+		'5': {'Draw Gif': example_draw_gif},
+		'6': {'Scoreboard': example_scoreboard},
+		'7': {'Buzzer': example_buzzer},
+		'8': {'Countdown': example_countdown}
+	}
+	print('Select an example to run:')
+	for key, value in menu.items():
+		print(f'{key}. {list(value.keys())[0]}')
+	print('0. Exit')
+	option = input('Option: ')
+	selected_option = option
+	if option in menu:
+		menu[option][list(menu[option].keys())[0]]()
+	elif option == '0':
+		print('Exiting...')
+		power_off()
+	else:
+		print('Invalid option, please try again.')
+	sleep(3)
+

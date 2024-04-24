@@ -4,7 +4,7 @@ from base64 import b64encode
 from math import floor
 from ._utils import clamp
 from time import time
-from PIL import Image, ImageTk
+from PIL import Image, ImageTk, ImageDraw
 import tkinter as tk
 
 class Renderer:
@@ -162,7 +162,7 @@ class Pixoo64Renderer(Renderer):
 			self.__send_frame(frame, speed=frame_speed, frame_number=len(buffer), offset=i)
 
 class ImageRenderer(Renderer):
-	def __init__(self, address, debug, resize_factor=1, resample_method=Image.NEAREST):
+	def __init__(self, address, debug, resize_factor=5, resample_method=Image.NEAREST):
 		super().__init__(address, debug)
 		self._size = 64
 		self._max_frames = 60
@@ -182,6 +182,7 @@ class ImageRenderer(Renderer):
 			if self._resize_factor > 1:
 				image = image.resize((self._size * self._resize_factor, self._size * self._resize_factor), resample=self._resample_method)
 			image.save('temp.png')
+			image.show()
 		else:
 			# Create gif with all frames
 			images = []
@@ -189,44 +190,52 @@ class ImageRenderer(Renderer):
 				images.append(Image.frombytes('RGB', (self._size, self._size), bytes(frame), 'raw'))
 			if self._resize_factor > 1:
 				images = [image.resize((self._size * self._resize_factor, self._size * self._resize_factor), resample=self._resample_method) for image in images]
-			images[0].save('temp.gif', save_all=True, append_images=images[1:], duration=frame_speed, loop=0)
+			images[0].save('temp.gif', save_all=True, append_images=images[1:], loop=0, duration=frame_speed)
 
 class WindowRenderer(Renderer):
 	def __init__(self, address, debug):
 		super().__init__(address, debug)
 		self._size = 64
 		self._max_frames = 60
+		self._resize_factor = 5
+		self.__resize_size = (self._size * self._resize_factor, self._size * self._resize_factor)
 		self._root = tk.Tk()
 		self._root.title('Pizzoo emulator')
-		self._resize_factor = 5
-		self._canvas = tk.Canvas(self._root, width=self._size * self._resize_factor, height=self._size * self._resize_factor, bg='black')
-		self._canvas.pack()
+		self._root.geometry('{0}x{1}'.format(self.__resize_size[0], self.__resize_size[1]))
+		self._root.attributes('-topmost', True)
+		self.__canvas = tk.Canvas(self._root, width=self._size * self._resize_factor, height=self._size * self._resize_factor, bg='black')
+		self.__canvas.pack()
+
+		image = Image.new('RGB', (self._size, self._size), color='black')
+
+		image = self._process_image(image)
+		self.__image = self.__canvas.create_image(self.__resize_size[0] / 2, self.__resize_size[0] / 2, image=image)
+		
 		self._root.update()
 
 	def switch(self, on=True):
 		pass
 
+	def _process_image(self, image):
+		image = image.resize(self.__resize_size, Image.NEAREST)
+		return ImageTk.PhotoImage(image)
+
 	def render(self, buffer, frame_speed):
 		'''
 		The static render creates an image (if one frame) or a gif (if multiple frames) and then shows and returns it.
 		'''
-		self._canvas.delete('all')
 		buffer = buffer[-self._max_frames:]
 		wh = self._size * self._resize_factor
 		if len(buffer) == 1:
 			image = Image.frombytes('RGB', (self._size, self._size), bytes(buffer[0]), 'raw')
-			image = image.resize((wh, wh), resample=Image.NEAREST)
-			image = ImageTk.PhotoImage(image)
-			self._canvas.create_image(0, 0, image=image, anchor='nw')
+			image = self._process_image(image)
+			self.__canvas.itemconfig(self.__image, image=image)
 		else:
 			# Create gif with all frames
 			images = []
 			for frame in buffer:
 				images.append(Image.frombytes('RGB', (self._size, self._size), bytes(frame), 'raw'))
 			images = [image.resize((wh, wh), resample=Image.NEAREST) for image in images]
-			image = ImageTk.PhotoImage(images[0])
-		# self._root.after('idle', self._root.quit)
 		self._root.update()
-		self._root.update_idletasks()
 
 __all__ = (Renderer, Pixoo64Renderer, ImageRenderer, WindowRenderer)
