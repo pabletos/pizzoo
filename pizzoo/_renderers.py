@@ -34,6 +34,9 @@ class Renderer:
 
 	def render(self, buffer, frame_speed):
 		raise NotImplementedError
+	
+	def compile_node(self, node, parent, inherited_props, node_props):
+		return None
 
 class Pixoo64Renderer(Renderer):
 	__start_countdown_time = -1
@@ -168,6 +171,64 @@ class Pixoo64Renderer(Renderer):
 		frame_speed = floor(clamp(frame_speed, 10, 10000))
 		for i, frame in enumerate(buffer):
 			self.__send_frame(frame, speed=frame_speed, frame_number=len(buffer), offset=i)
+
+	def compile_node(self, node, parent, inherited_props, node_props):
+		tag = node.tag
+		width, height = node_props['node_size']
+		abs_x, abs_y = node_props['abs_coords']
+		if tag == 'message':
+			text = node.text
+			attributes = self.__command_atributes(node)
+			result = (DisplayType.TEXT_MESSAGE, {**attributes, 'TextString': text, 'x': abs_x, 'y': abs_y, 'TextWidth': width, 'TextHeight': height})
+		elif tag == 'time':
+			attributes = self.__command_atributes(node)
+			time_format = node.attrib.get('format', 'HH:mm:ss')
+			if time_format == 'HH:mm:ss':
+				dt = DisplayType.HOUR_MIN_SEC
+			elif time_format == 'HH':
+				dt = DisplayType.HOUR
+			elif time_format == 'HH:mm':
+				dt = DisplayType.HOUR_MIN
+			elif time_format == 'mm':
+				dt = DisplayType.MINUTE
+			elif time_format == 'ss':
+				dt = DisplayType.SECOND
+			result = (dt, {**attributes, 'x': abs_x, 'y': abs_y, 'TextWidth': width, 'TextHeight': height})
+		elif tag == 'temperature':
+			attributes = self.__command_atributes(node)
+			temp_format = node.attrib.get('kind', 'actual')
+			if temp_format == 'actual':
+				dt = DisplayType.TEMP_DIGIT
+			elif temp_format == 'max':
+				dt = DisplayType.TODAY_MAX_TEMP
+			elif temp_format == 'min':
+				dt = DisplayType.TODAY_MIN_TEMP
+			result = (dt, {**attributes, 'x': abs_x, 'y': abs_y, 'TextWidth': width, 'TextHeight': height})     
+		elif tag == 'weather':
+			attributes = self.__command_atributes(node)
+			result = (DisplayType.WEATHER_WORD, {**attributes, 'x': abs_x, 'y': abs_y, 'TextWidth': width, 'TextHeight': height})
+		elif tag == 'date':
+			attributes = self.__command_atributes(node)
+			date_format = node.attrib.get('format', 'DD/MM/YYYY')
+			if date_format == 'DD/MM/YYYY':
+				dt = DisplayType.DAY_MONTH_YEAR
+			elif date_format == 'DD':
+				dt = DisplayType.DAY
+			elif date_format == 'MM':
+				dt = DisplayType.MONTH
+			elif date_format == 'MMM':
+				dt = DisplayType.ENG_MONTH
+			elif date_format == 'YYYY':
+				dt = DisplayType.YEAR
+			elif date_format == 'MM/YY':
+				dt = DisplayType.MONTH_YEAR
+			elif date_format == 'WW':
+				dt = DisplayType.ENG_WEEK_TWO
+			elif date_format == 'WWW':
+				dt = DisplayType.ENG_WEEK_THREE
+			elif date_format == 'WWWW':
+				dt = DisplayType.ENG_WEEK_FULL
+			result = (dt, {**attributes, 'x': abs_x, 'y': abs_y, 'TextWidth': width, 'TextHeight': height})
 
 class ImageRenderer(Renderer):
 	def __init__(self, address, debug, resize_factor=5, resample_method=Image.NEAREST):

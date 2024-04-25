@@ -471,12 +471,13 @@ class Pizzoo:
 		result = None
 		abs_x, abs_y = 0, 0
 		x, y = self.__node_coords(node, new_props)
+		position = node.attrib.get('position', 'static')
 		position_props = {}
 		# Now this computation is used for every node
 		abs_x, abs_y, position_props = self.__node_position(
 			x,
 			y,
-			node.attrib.get('position', 'static'),
+			position,
 			new_props.get('x', 0),
 			new_props.get('y', 0),
 			new_props.get('rel_x', 0),
@@ -493,7 +494,7 @@ class Pizzoo:
 			abs_x2, abs_y2, _ = self.__node_position(
 				x2,
 				y2,
-				node.attrib.get('position', 'static'),
+				position,
 				new_props.get('x', 0),
 				new_props.get('y', 0),
 				new_props.get('rel_x', 0),
@@ -533,6 +534,16 @@ class Pizzoo:
 			path = node.attrib.get('src', None)
 			# add size
 			result = (self.draw_image, {'image_or_path': path, 'xy': (abs_x, abs_y)})
+		else:
+			width, height = self.__node_size(node, x, y, abs_x, abs_y, new_props)
+			node_props = {
+				'position': position,
+				'coords': (x, y),
+				'abs_coords': (abs_x, abs_y),
+				'rel_coords': (position_props['rel_x'], position_props['rel_y']) if 'rel_x' in position_props else None,
+				'node_size': (width, height)
+			}
+			result = self.renderer.compile_node(node, parent_node, inherited_props, node_props)
 		'''
 		elif tag == 'message':
 			text = node.text
