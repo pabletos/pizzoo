@@ -3,6 +3,7 @@ from requests import post
 from base64 import b64encode
 from math import floor
 from ._utils import clamp
+from ._constants import DisplayType
 from time import time
 from PIL import Image, ImageTk, ImageDraw
 import tkinter as tk
@@ -176,6 +177,7 @@ class Pixoo64Renderer(Renderer):
 		tag = node.tag
 		width, height = node_props['node_size']
 		abs_x, abs_y = node_props['abs_coords']
+		result = None
 		if tag == 'message':
 			text = node.text
 			attributes = self.__command_atributes(node)
@@ -229,6 +231,7 @@ class Pixoo64Renderer(Renderer):
 			elif date_format == 'WWWW':
 				dt = DisplayType.ENG_WEEK_FULL
 			result = (dt, {**attributes, 'x': abs_x, 'y': abs_y, 'TextWidth': width, 'TextHeight': height})
+		return result
 
 class ImageRenderer(Renderer):
 	def __init__(self, address, debug, resize_factor=5, resample_method=Image.NEAREST):
