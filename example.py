@@ -94,15 +94,24 @@ def example_template():
 	pizzoo.load_font('amstrad', './files/amstrad_cpc_extended.bdf')
 	pizzoo.render_template('''
 		<pizzoo>
-			<section x="5" y="5" width="53" height="53">
-				<rectangle x="0" y="0" width="100%" height="100%" color="#FFFFFF" filled="true" />
-				<section x="1" y="1" width="51" height="51">
-					<text x="0" y="0" color="#000000" wrap="true">Long text that will be wrapped</text>
-					<text x="0" y="85%" color="#FF0000" font="amstrad">Cool</text>
-					<image x="16" y="50%" src="./files/test_image.png" />
+			<rectangle x="0" y="0" width="100%" height="100%" color="8" filled="true">
+				<section x="0" y="2">
+					<date format="DD" x="1" color="#ffc107" font="small"></date>
+					<text x="9" color="#ffc107">-</text>
+					<date format="MM" x="13" color="#ffc107" font="small"></date>
+					<time format="HH:mm" x="26" font="small"></time>
+					<date format="WWW" width="63" align="right" color="#ffc107" font="small"></date>
 				</section>
-			</section>
-		</pizzoo>				
+				<section x="5" y="10" width="53" height="43">
+					<rectangle x="0" y="0" width="100%" height="100%" color="#FFFFFF" filled="true" />
+					<section x="1" y="1" width="51" height="51">
+						<text x="0" y="0" color="#000000" wrap="true">Long text wrapped</text>
+						<text x="10" y="80%" shadow="diagonal" color="#FF0000" font="amstrad">Cool</text>
+						<image x="17" y="40%" src="./files/test_image.png" />
+					</section>
+				</section>
+			</rectangle>
+		</pizzoo>
 	''')
 	
 def power_off():

@@ -1,19 +1,10 @@
-import base64
-import json
-from enum import IntEnum
 from math import floor
-
-from requests import post
 from PIL import Image, ImageOps
-
 from math import floor
-from time import time, sleep
 from xml.etree.ElementTree import ElementTree, fromstring
-from ._constants import PICO_PALETTE, DIAL_DEFAULT_ITEM, PICO_HEX_PALETTE
-from ._utils import clamp
+from ._utils import clamp, get_color_rgb
 from ._renderers import Pixoo64Renderer, Renderer, ImageRenderer, WindowRenderer
 from os.path import dirname, realpath, join
-
 
 class Pizzoo:
 	__buffer = []
@@ -24,7 +15,7 @@ class Pizzoo:
 	__current_dir = dirname(realpath(__file__))
 
 	def __init__(self, address, renderer=Pixoo64Renderer, renderer_params={}, debug=False):
-		self.renderer = renderer(address=address, debug=debug, **renderer_params)
+		self.renderer = renderer(address=address, pizzoo=self, debug=debug, **renderer_params)
 		self.__compute_device_specs()
 		self.__debug = debug
 		# Initialize buffer
@@ -78,7 +69,7 @@ class Pizzoo:
 		Returns:
 		- None
 		'''
-		rgb = self.__get_color_rgb(rgb)
+		rgb = get_color_rgb(rgb)
 		self.__buffer[self.__current_frame] = [rgb[0], rgb[1], rgb[2]] * self.pixel_count
 
 	def add_frame(self, rgb=(0, 0, 0)):
@@ -121,7 +112,7 @@ class Pizzoo:
 		- None
 		'''
 		index = xy[0] + (xy[1] * self.size)
-		rgb = self.__get_color_rgb(color)
+		rgb = get_color_rgb(color)
 		if index < 0 or index >= self.pixel_count:
 			raise ValueError(f'Invalid index given: {index} (maximum index is {self.pixel_count - 1})')
 		# FIXME: Could we maybe move to rgba and use the alpha channel to determine if the pixel is on or off? -> index = index * 4
@@ -245,7 +236,7 @@ class Pizzoo:
 			self.__fonts[font_name] = Font(self.__fonts[font_name])
 		return self.__fonts[font_name]
 
-	def draw_text(self, text, xy=(0, 0), font='default', color='#FFFFFF', align=0, line_width='auto'):
+	def draw_text(self, text, xy=(0, 0), font='default', color='#FFFFFF', align=0, line_width='auto', shadow=None, shadow_rgb=(0, 0, 0)):
 		'''
 		Draws a text on the current frame at the given coordinates.
 
@@ -255,6 +246,8 @@ class Pizzoo:
 		- font (str): The name of the font to use. Default is 'default'.
 		- color (tuple(int, int, int) | int | string): The color to draw the text with.
 		- align (int): The alignment of the text. 0 is left, 1 is center and 2 is right.
+		- shadow (str | tuple | None): The type of shadow to add to the text. Values are 'horizontal', 'vertical', 'diagonal', tuple with displacements, or None.
+        - shadow_rgb (tuple(int, int, int) | int | string): The color of the shadow.
 		- line_width (int): The maximum width of the text. Default is 'auto'.
 
 		Returns:
@@ -262,8 +255,20 @@ class Pizzoo:
 		'''
 		line_width = self.size if line_width == 'auto' else line_width
 		font = self.__get_font(font)
-		rgb = self.__get_color_rgb(color)
+		rgb = get_color_rgb(color)
 		bitmap = font.draw(text, missing='?', linelimit=line_width)
+		if shadow is not None:
+			shadow_rgb = get_color_rgb(shadow_rgb)
+			shadow_displacement = (0, 0)
+			if type(shadow) == tuple:
+				shadow_displacement = shadow
+			elif shadow == 'horizontal':
+				shadow_displacement = (1, 0)
+			elif shadow == 'vertical':
+				shadow_displacement = (0, -1)
+			elif shadow == 'diagonal':
+				shadow_displacement = (1, -1)
+			bitmap.shadow(shadow_displacement[0], shadow_displacement[1])
 		text_data = bitmap.todata(2)
 		width, height = bitmap.width(), bitmap.height()
 		for x in range(width):
@@ -272,7 +277,7 @@ class Pizzoo:
 					placed_x, placed_y = x + xy[0], y + xy[1]
 					if self.size - 1 < placed_x or placed_x < 0 or self.size - 1 < placed_y or placed_y < 0:
 						continue
-					self.draw_pixel((placed_x, placed_y), rgb)
+					self.draw_pixel((placed_x, placed_y), rgb if text_data[y][x] == 1 else shadow_rgb)
 
 	def __compute_image_resize(self, image, size):
 		if size == 'auto':
@@ -339,36 +344,6 @@ class Pizzoo:
 		self.renderer.render(self.__buffer, frame_speed)
 		self.reset_buffer()
 
-	def set_dial(self, items, background=None, clear=True):
-		'''
-		Sets the dial on the device with the given items. These are networking commands on the pixoo device that manage things like temperature, weather, time, etc.
-		Most of them just auto-update, so it's useful for creating custom dials (Like watchfaces, for example).
-		
-		Parameters:
-		- items (list(dict)): A list of items to display on the dial. Each item should have at least a 'DisplayType' type.
-		- background (str): The path to an image to use as the background of the dial. Default is None.
-		- clear (bool): Whether to send a network clear for the current text on the device or not. Default is True.
-
-		Returns:
-		- None
-
-		Note: This method is pretty raw and depends on knowing the exact parameters to send to the device. It's recommended to use the higher-level render_template method.
-		If needed additional documentation can be found on the official API (https://doc.divoom-gz.com/web/#/12?page_id=234).
-		'''
-		if background is not None:
-			path_ext = background.split('.')[-1]
-			if path_ext == 'gif':
-				self.draw_gif(background, size='auto', fill='auto')
-			else:
-				self.draw_image(background)
-			self.render()
-		if clear:
-			self.clear_remote_text()
-		processed_items = [{'TextId': index + 1, **DIAL_DEFAULT_ITEM, **item} for index, item in enumerate(items)]
-		self.__request('Draw/SendHttpItemList', {
-			'ItemList': processed_items
-		})
-	
 	def switch(self, on=True):
 		'''
 		Turns the device on or off.
@@ -435,35 +410,6 @@ class Pizzoo:
 		x = int(x[:-1]) * ancestor_props.get('width', self.size) // 100 if x[-1] == '%' else int(x)
 		y = int(y[:-1]) * ancestor_props.get('height', self.size) // 100 if y[-1] == '%' else int(y)
 		return x, y
-	
-	def __command_atributes(self, node):
-		attributes = {}
-		attributes['dir'] = node.attrib.get('scroll', 'left')
-		attributes['dir'] = 0 if attributes['dir'] == 'left' else 1
-		try:
-			attributes['font'] = int(node.attrib.get('font', '2'))
-		except:
-			attributes['font'] = 18 if node.attrib['font'] == 'small' else 2
-		attributes['speed'] = clamp(int(node.attrib.get('speed', '100')), 1, 100)
-		attributes['color'] = node.attrib.get('color', '7')
-		try:
-			attributes['color'] = PICO_HEX_PALETTE[int(attributes['color'])]
-		except:
-			attributes['color'] = attributes['color']
-		attributes['align'] = node.attrib.get('align', 'left')
-		attributes['align'] = 1 if attributes['align'] == 'left' else 2 if attributes['align'] == 'center' else 3
-		if 'update' in node.attrib:
-			attributes['update_time'] = int(node.attrib['update'])
-		return attributes
-	
-	def __get_node_color(self, color_str):
-		if color_str.isdigit():
-			return int(color_str)
-		if color_str[0] == '#':
-			return tuple(int(color_str[i:i+2], 16) for i in (1, 3, 5))
-		if color_str[0] == '(' and color_str[-1] == ')':
-			return tuple(int(x) for x in color_str[1:-1].split(','))
-		return color_str
 
 	def __compile_node(self, node, parent_node=None, inherited_props=None):
 		tag = node.tag
@@ -500,23 +446,25 @@ class Pizzoo:
 				new_props.get('rel_x', 0),
 				new_props.get('rel_y', 0)
 			)
-			color = self.__get_node_color(node.attrib.get('color', '7'))
+			color = get_color_rgb(node.attrib.get('color', '7'))
 			result = (self.draw_line, {'start': (abs_x, abs_y), 'end': (abs_x2, abs_y2), 'color': color})
 		elif tag == 'rectangle':
 			# end position compute
-			color = self.__get_node_color(node.attrib.get('color', '7'))
+			color = get_color_rgb(node.attrib.get('color', '7'))
 			width, height = self.__node_size(node, x, y, abs_x, abs_y, new_props)
 			new_props['width'] = width
 			new_props['height'] = height
 			result = (self.draw_rectangle, {'xy': (abs_x, abs_y), 'width': width, 'height': height, 'color': color, 'filled': True})
 		elif tag == 'circle':
-			color = self.__get_node_color(node.attrib.get('color', '7'))
+			color = get_color_rgb(node.attrib.get('color', '7'))
 			radius = int(node.attrib.get('radius', '8'))
 			result = (self.draw_circle, {'xy': (abs_x, abs_y), 'radius': radius, 'color': color})
 		elif tag == 'text':
-			color = self.__get_node_color(node.attrib.get('color', '7'))
+			color = get_color_rgb(node.attrib.get('color', '7'))
 			shadow = node.attrib.get('shadow', None)
-			shadow_color = eval(node.attrib.get('shadow_color', '0'))
+			if shadow and shadow[0] == '(' and shadow[-1] == ')':
+				shadow = tuple(int(x) for x in shadow[1:-1].split(','))
+			shadow_color = get_color_rgb(node.attrib.get('shadowColor', '0'))
 			font = node.attrib.get('font', 'default')
 			text = node.text
 			wrap = node.attrib.get('wrap', 'false').lower() == 'true'
@@ -526,9 +474,9 @@ class Pizzoo:
 				line_width = width
 			if text is None:
 				text = ''
-			result = (self.draw_text, {'text': text, 'xy': (abs_x, abs_y), 'color': color, 'font': font, 'line_width': line_width})
+			result = (self.draw_text, {'text': text, 'xy': (abs_x, abs_y), 'color': color, 'shadow': shadow, 'shadow_rgb': shadow_color, 'font': font, 'line_width': line_width})
 		elif tag == 'pixel':
-			color = self.__get_node_color(node.attrib.get('color', '7'))
+			color = get_color_rgb(node.attrib.get('color', '7'))
 			result = (self.draw_pixel, {'xy': (abs_x, abs_y), 'rgb': color})
 		elif tag == 'image':
 			path = node.attrib.get('src', None)
@@ -544,93 +492,32 @@ class Pizzoo:
 				'node_size': (width, height)
 			}
 			result = self.renderer.compile_node(node, parent_node, inherited_props, node_props)
-		'''
-		elif tag == 'message':
-			text = node.text
-			width, height = self.__node_size(node, x, y, abs_x, abs_y, new_props)
-			attributes = self.__command_atributes(node)
-			result = (DisplayType.TEXT_MESSAGE, {**attributes, 'TextString': text, 'x': abs_x, 'y': abs_y, 'TextWidth': width, 'TextHeight': height})
-		elif tag == 'time':
-			attributes = self.__command_atributes(node)
-			width, height = self.__node_size(node, x, y, abs_x, abs_y, new_props)
-			time_format = node.attrib.get('format', 'HH:mm:ss')
-			if time_format == 'HH:mm:ss':
-				dt = DisplayType.HOUR_MIN_SEC
-			elif time_format == 'HH':
-				dt = DisplayType.HOUR
-			elif time_format == 'HH:mm':
-				dt = DisplayType.HOUR_MIN
-			elif time_format == 'mm':
-				dt = DisplayType.MINUTE
-			elif time_format == 'ss':
-				dt = DisplayType.SECOND
-			result = (dt, {**attributes, 'x': abs_x, 'y': abs_y, 'TextWidth': width, 'TextHeight': height})
-		elif tag == 'temperature':
-			attributes = self.__command_atributes(node)
-			width, height = self.__node_size(node, x, y, abs_x, abs_y, new_props)
-			temp_format = node.attrib.get('kind', 'actual')
-			if temp_format == 'actual':
-				dt = DisplayType.TEMP_DIGIT
-			elif temp_format == 'max':
-				dt = DisplayType.TODAY_MAX_TEMP
-			elif temp_format == 'min':
-				dt = DisplayType.TODAY_MIN_TEMP
-			result = (dt, {**attributes, 'x': abs_x, 'y': abs_y, 'TextWidth': width, 'TextHeight': height})     
-		elif tag == 'weather':
-			attributes = self.__command_atributes(node)
-			width, height = self.__node_size(node, x, y, abs_x, abs_y, new_props)
-			result = (DisplayType.WEATHER_WORD, {**attributes, 'x': abs_x, 'y': abs_y, 'TextWidth': width, 'TextHeight': height})
-		elif tag == 'date':
-			attributes = self.__command_atributes(node)
-			width, height = self.__node_size(node, x, y, abs_x, abs_y, new_props)
-			date_format = node.attrib.get('format', 'DD/MM/YYYY')
-			if date_format == 'DD/MM/YYYY':
-				dt = DisplayType.DAY_MONTH_YEAR
-			elif date_format == 'DD':
-				dt = DisplayType.DAY
-			elif date_format == 'MM':
-				dt = DisplayType.MONTH
-			elif date_format == 'MMM':
-				dt = DisplayType.ENG_MONTH
-			elif date_format == 'YYYY':
-				dt = DisplayType.YEAR
-			elif date_format == 'MM/YY':
-				dt = DisplayType.MONTH_YEAR
-			elif date_format == 'WW':
-				dt = DisplayType.ENG_WEEK_TWO
-			elif date_format == 'WWW':
-				dt = DisplayType.ENG_WEEK_THREE
-			elif date_format == 'WWWW':
-				dt = DisplayType.ENG_WEEK_FULL
-			result = (dt, {**attributes, 'x': abs_x, 'y': abs_y, 'TextWidth': width, 'TextHeight': height})
-		'''
 		new_props = {**new_props, **position_props}
 		return result, new_props
 	
-	def __get_root_options(self, root):
-		options = []
+	def __compile_root_options(self, root):
+		result = []
 		attribs = root.attrib
 		brigthness = attribs.get('brightness', None)
 		turn_screen = bool(attribs.get('turnOn', False))
 		clear = bool(attribs.get('clear', False))
 		notification = bool(attribs.get('notification', False))
-		'''
-		if brigthness is not None:
-			options.append((self.set_brightness, {'brightness': clamp(int(brigthness), 0, 100)}))
-		if turn_screen is True:
-			options.append((self.set_screen_on, {}))
 		if clear is True:
-			options.append((self.clear, {}))
-		if notification is True:
-			options.append((self.buzzer, {'duration': 2}))
-		'''
-		return options
+			result.append((self.cls, {}))
+		options = {
+			'brigthness': clamp(int(brigthness), 0, 100) if brigthness is not None else None,
+			'clear': clear,
+			'notification': notification,
+			'turn_screen': turn_screen
+		}
+		result = result + self.renderer.compile_node_root_options(options)
+		return result
 	
 	def __compile_template(self, template):
 		tree = ElementTree(fromstring(template))
 		root = tree.getroot()
 		assert root.tag == 'pizzoo', 'Root tag must be "pizzoo"'
-		commands = self.__get_root_options(root)
+		commands = self.__compile_root_options(root)
 		pending = [{'node': tree.getroot(), 'parent': None, 'props': {}}]
 		while len(pending) > 0:
 			current = pending.pop(0)
@@ -641,35 +528,18 @@ class Pizzoo:
 				pending.append({'node': child, 'parent': current, 'props': props})
 		return commands
 
-	# https://stackoverflow.com/questions/61834266/super-fast-way-to-compare-if-two-strings-are-equal
 	def render_template(self, template, use_cache=True):
 		self.cls()
 		commands = self.__compile_template(template)
-		dial_items = []
+		renderer_items = []
 		for command in commands:
-			'''
-			if type(command[0]) is DisplayType:
-				dial_items.append({'type': command[0], **command[1]})
-			else:   
+			if callable(command[0]):
 				command[0](**command[1])
-			'''
-			command[0](**command[1])
+			else:
+				renderer_items.append(command)
 		self.render()
-		'''
-		if len(dial_items) > 0:
-			# workaround for a desync error with the divoom device when sending dial items
-			sleep(0.2)
-			self.set_dial(dial_items)
-		'''
-
-	def __get_color_rgb(self, color):
-		if isinstance(color, tuple):
-			return color
-		if isinstance(color, int):
-			return PICO_PALETTE[color]
-		if isinstance(color, str) and color[0] == '#' and len(color) == 7:
-			return tuple(int(color[i:i+2], 16) for i in (1, 3, 5))
-		raise ValueError('Invalid color format')
+		if len(renderer_items) > 0:
+			self.renderer.render_template_items(renderer_items, use_cache)
 	
 	def __getattr__(self, name):
 		if hasattr(self.renderer, name) and callable(getattr(self.renderer, name)):
