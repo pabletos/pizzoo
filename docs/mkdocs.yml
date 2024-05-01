@@ -1,5 +1,6 @@
 site_name: Pizzoo
 nav:
-  - Home: index.md
-  - Getting started: started.md
+  - Introduction: index.md
+  - Installation: installation.md
+  - Quick Start: quickstart.md
 theme: readthedocs

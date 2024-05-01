@@ -4,6 +4,7 @@ from base64 import b64encode
 from math import floor
 from ._utils import clamp, get_color_rgb, tuple_to_hex
 from ._constants import DisplayType, DIAL_DEFAULT_ITEM
+from datetime import datetime
 from time import time, sleep
 from PIL import Image, ImageTk
 import tkinter as tk
@@ -333,6 +334,39 @@ class ImageRenderer(Renderer):
 			if self._resize_factor > 1:
 				images = [image.resize((self._size * self._resize_factor, self._size * self._resize_factor), resample=self._resample_method) for image in images]
 			images[0].save('temp.gif', save_all=True, append_images=images[1:], loop=0, duration=frame_speed)
+
+	def __command_atributes(self, node):
+		attributes = {}
+		attributes['color'] = get_color_rgb(node.attrib.get('color', '7'))
+		return attributes
+	
+	def compile_node(self, node, parent, inherited_props, node_props):
+		tag = node.tag
+		abs_x, abs_y = node_props['abs_coords']
+		result = None
+		if tag == 'message':
+			text = node.text
+			attributes = self.__command_atributes(node)
+			result = (self._pizzoo.draw_text, {'text': text, 'xy': (abs_x, abs_y), **attributes})
+		elif tag == 'time':
+			attributes = self.__command_atributes(node)
+			time_format = node.attrib.get('format', 'HH:mm:ss')
+			time_format = time_format.replace('HH', '%H').replace('mm', '%M').replace('ss', '%S')
+			text = datetime.now().strftime(time_format)
+			result = (self._pizzoo.draw_text, {'text': text, 'xy': (abs_x, abs_y), **attributes})
+		elif tag == 'temperature':
+			attributes = self.__command_atributes(node)
+			result = (self._pizzoo.draw_text, {'text': '30°C', 'xy': (abs_x, abs_y), **attributes})     
+		elif tag == 'weather':
+			attributes = self.__command_atributes(node)
+			result = (self._pizzoo.draw_text, {'text': 'Sunny', 'xy': (abs_x, abs_y), **attributes})
+		elif tag == 'date':
+			attributes = self.__command_atributes(node)
+			date_format = node.attrib.get('format', 'DD/MM/YYYY')
+			date_format = date_format.replace('DD', '%d').replace('MM', '%m').replace('YYYY', '%Y').replace('WWW', '%a')
+			text = datetime.now().strftime(date_format)
+			result = (self._pizzoo.draw_text, {'text': text, 'xy': (abs_x, abs_y), **attributes})
+		return result
 
 class WindowRenderer(Renderer):
 	def __init__(self, address, pizzoo, debug):

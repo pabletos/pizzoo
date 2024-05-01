@@ -5,8 +5,8 @@ setup(
     version="0.1.0",
     author="Pablo Huet",
     description=(
-        "Pizzoo is a full-fledged library for rendering on pixel matrix screens, with direct support for the Divoom Pixoo64 device.",
-        "Additionally any other device can be easily integrated.",
+        "Pizzoo is a library for rendering on pixel matrix screens, with direct support for the Divoom Pixoo64 device, and easy integration for any other one.",
+        "It includes full animation buffer manipulation, a micro game engine, as well as XML/HTML like templates compilation.",
     ),
     license="MIT",
     keywords="pixoo, pixoo64, divoom, screen, pixel, matrix, render, buffer, LED matrix, LED, raspberry, raspberry pi",

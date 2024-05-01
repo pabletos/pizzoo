@@ -114,6 +114,7 @@ class Pizzoo:
 		index = xy[0] + (xy[1] * self.size)
 		rgb = get_color_rgb(color)
 		if index < 0 or index >= self.pixel_count:
+			return
 			raise ValueError(f'Invalid index given: {index} (maximum index is {self.pixel_count - 1})')
 		# FIXME: Could we maybe move to rgba and use the alpha channel to determine if the pixel is on or off? -> index = index * 4
 		index = index * 3

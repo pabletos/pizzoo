@@ -2,7 +2,7 @@ from pizzoo import Pizzoo, WindowRenderer, ImageRenderer
 from time import sleep
 
 '''Create the main object and the connection to the Pixoo device'''
-pizzoo = Pizzoo('192.168.50.225', debug=True)
+pizzoo = Pizzoo('192.168.50.225', renderer=ImageRenderer, debug=True)
 pizzoo.switch(on=True) # Turn on the Pixoo device screen
 
 def example_draw_pixel():
@@ -113,6 +113,17 @@ def example_template():
 			</rectangle>
 		</pizzoo>
 	''')
+
+def example_advanced_animation():
+	'''
+	Advanced animation example for creating complex animations adding frames to the buffer.
+	'''
+	frames = 54
+	for i in range(0, frames):
+		pizzoo.cls()
+		pizzoo.draw_circle((i + 4, i + 4), 2, '#00ff00', filled=True)
+		pizzoo.add_frame()
+	pizzoo.render(frame_speed=100)
 	
 def power_off():
 	'''
@@ -132,7 +143,8 @@ if __name__ == '__main__':
 		'6': {'Scoreboard': example_scoreboard},
 		'7': {'Buzzer': example_buzzer},
 		'8': {'Countdown': example_countdown},
-		'9': {'Render an XML template': example_template}
+		'9': {'Render an XML template': example_template},
+		'10': {'Advanced Animation': example_advanced_animation}
 	}
 	print('Select an example to run:')
 	for key, value in menu.items():
