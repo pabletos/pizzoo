@@ -15,6 +15,17 @@ class Pizzoo:
 	__current_dir = dirname(realpath(__file__))
 
 	def __init__(self, address, renderer=Pixoo64Renderer, renderer_params={}, debug=False):
+		'''Initialize the Pizzoo object with the given renderer. Additional parameters can be passed to the renderer.
+
+		Args:
+			address (str): The IP address of the Pixoo device, or any renderer that needs an address.
+			renderer (Renderer): The renderer to use. Default is Pixoo64Renderer.
+			renderer_params (dict): Additional parameters to pass to the renderer.
+			debug (bool): Whether to enable debug mode or not. Default is False.
+
+		Returns:
+			None
+		'''
 		self.renderer = renderer(address=address, pizzoo=self, debug=debug, **renderer_params)
 		self.__compute_device_specs()
 		self.__debug = debug
@@ -29,16 +40,15 @@ class Pizzoo:
 		self.__max_frames = self.renderer.get_max_frames()
 		
 	def load_font(self, font_name, path, soft=True):
-		'''
-		Loads a new font on bdf format to be used on the draw_text method.
+		'''Loads a new font on bdf format to be used on the draw_text method.
 
-		Parameters:
-		- font_name (str): The name to identify the font.
-		- path (str): The path to the font file.
-		- soft (bool): If True, the font will be loaded when used. If False, the font will be loaded now.
+		Args:
+			font_name (str): The name to identify the font.
+			path (str): The path to the font file.
+			soft (bool): If True, the font will be loaded when used. If False, the font will be loaded now.
 		
 		Returns:
-		- None
+			None
 		'''
 		if soft:
 			self.__fonts[font_name] = path
@@ -47,40 +57,37 @@ class Pizzoo:
 			self.__fonts[font_name] = Font(path)
 
 	def load_fonts(self, fonts):
-		'''
-		Loads multiple fonts at once.
+		'''Loads multiple fonts at once.
 
-		Parameters:
-		- fonts (dict): A dictionary with the font name as key and the font path as value.
+		Args:
+			fonts (dict): A dictionary with the font name as key and the font path as value.
 
 		Returns:
-		- None
+			None
 		'''
 		for font_name, path in fonts.items():
 			self.load_font(font_name, path)
 		
 	def cls(self, rgb=(0, 0, 0)):
-		'''
-		Clears the current frame with the given color.
+		'''Clears the current frame with the given color.
 
-		Parameters:
-		- rgb (tuple(int, int, int) | int | string): The color to clear the frame with. Default is black.
+		Args:
+			rgb (tuple(int, int, int) | int | string): The color to clear the frame with. Default is black.
 		
 		Returns:
-		- None
+			None
 		'''
 		rgb = get_color_rgb(rgb)
 		self.__buffer[self.__current_frame] = [rgb[0], rgb[1], rgb[2]] * self.pixel_count
 
 	def add_frame(self, rgb=(0, 0, 0)):
-		'''
-		Adds a new frame to the animation buffer.
+		'''Adds a new frame to the animation buffer.
 
-		Parameters:
-		- rgb (tuple(int, int, int) | int | string): The color to fill the frame with. Default is black.
+		Args:
+			rgb (tuple(int, int, int) | int | string): The color to fill the frame with. Default is black.
 		
 		Returns:
-		- None
+			None
 		'''
 		assert self.__current_frame <= self.__max_frames, f'Frame limit reached, push before reaching {self.__max_frames} frames'
 		frame = []
@@ -90,31 +97,33 @@ class Pizzoo:
 		self.__current_frame = len(self.__buffer) - 1
 
 	def reset_buffer(self):
+		'''Resets the animation buffer, removing all frames and adding a new one.
+
+		Returns:
+			And int with the number of items removed from the buffer.
 		'''
-		Resets the animation buffer, removing all frames and adding a new one.
-		'''
+		removed_items = len(self.__buffer)
 		self.__buffer = []
 		self.__current_frame = -1
 		self.add_frame()
+		return removed_items
 
 	def draw_pixel(self, xy, color):
-		'''
-		Draws a single pixel on the current frame at the given coordinates.
+		'''Draws a single pixel on the current frame at the given coordinates.
 
-		Parameters:
-		- xy (tuple(int, int)): The coordinates to draw the pixel at.
-		- color (tuple(int, int, int) | int | string): The color to draw the pixel with.
+		Args:
+			xy (tuple(int, int)): The coordinates to draw the pixel at.
+			color (tuple(int, int, int) | int | string): The color to draw the pixel with.
 
 		Raises:
-		- ValueError: If the given coordinates are out of bounds.
+			ValueError: If the given coordinates are out of bounds.
 
 		Returns:
-		- None
+			None
 		'''
 		index = xy[0] + (xy[1] * self.size)
 		rgb = get_color_rgb(color)
 		if index < 0 or index >= self.pixel_count:
-			return
 			raise ValueError(f'Invalid index given: {index} (maximum index is {self.pixel_count - 1})')
 		# FIXME: Could we maybe move to rgba and use the alpha channel to determine if the pixel is on or off? -> index = index * 4
 		index = index * 3
@@ -123,18 +132,17 @@ class Pizzoo:
 		self.__buffer[self.__current_frame][index + 2] = rgb[2]
 
 	def draw_rectangle(self, xy, width, height, color, filled=True):
-		'''
-		Draws a rectangle on the current frame at the given coordinates.
+		'''Draws a rectangle on the current frame at the given coordinates.
 
-		Parameters:
-		- xy (tuple(int, int)): The coordinates of the top-left corner of the rectangle.
-		- width (int): The width of the rectangle.
-		- height (int): The height of the rectangle.
-		- color (tuple(int, int, int) | int | string): The color to draw the rectangle with.
-		- filled (bool): Whether to fill the rectangle or not.
+		Args:
+			xy (tuple(int, int)): The coordinates of the top-left corner of the rectangle.
+			width (int): The width of the rectangle.
+			height (int): The height of the rectangle.
+			color (tuple(int, int, int) | int | string): The color to draw the rectangle with.
+			filled (bool): Whether to fill the rectangle or not.
 
 		Returns:
-		- None
+			None
 		'''
 		for x in range(xy[0], xy[0] + width):
 			for y in range(xy[1], xy[1] + height):
@@ -142,17 +150,16 @@ class Pizzoo:
 					self.draw_pixel((x, y), color)
 
 	def draw_circle(self, xy, radius, color, filled=True):
-		'''
-		Draws a circle on the current frame at the given coordinates.
+		'''Draws a circle on the current frame at the given coordinates.
 
-		Parameters:
-		- xy (tuple(int, int)): The coordinates of the center of the circle.
-		- radius (int): The radius of the circle.
-		- color (tuple(int, int, int) | int | string): The color to draw the circle with.
-		- filled (bool): Whether to fill the circle or not.
+		Args:
+			xy (tuple(int, int)): The coordinates of the center of the circle.
+			radius (int): The radius of the circle.
+			color (tuple(int, int, int) | int | string): The color to draw the circle with.
+			filled (bool): Whether to fill the circle or not.
 
 		Returns:
-		- None
+			None
 		'''
 		for x in range(xy[0] - radius, xy[0] + radius + 1):
 			for y in range(xy[1] - radius, xy[1] + radius + 1):
@@ -160,17 +167,16 @@ class Pizzoo:
 					self.draw_pixel((x, y), color)
 	
 	def draw_image(self, image_or_path, xy=(0, 0), size='auto', resample_method=Image.NEAREST):
-		'''
-		Draws an image on the current frame at the given coordinates.
+		'''Draws an image on the current frame at the given coordinates.
 
-		Parameters:
-		- image_or_path (str | Image): The path to the image file or the Image object to draw.
-		- xy (tuple(int, int)): The coordinates of the top-left corner of the image.
-		- size (tuple(int, int) | str): The size to resize the image to. If 'auto' is given, the image will be resized to fit the screen if needed.
-		- resample_method (Resampling): The resample mode to use when resizing the image to fit the screen. Default is Image.NEAREST.
+		Args:
+			image_or_path (str | Image): The path to the image file or the Image object to draw.
+			xy (tuple(int, int)): The coordinates of the top-left corner of the image.
+			size (tuple(int, int) | str): The size to resize the image to. If 'auto' is given, the image will be resized to fit the screen if needed.
+			resample_method (Resampling): The resample mode to use when resizing the image to fit the screen. Default is Image.NEAREST.
 		
 		Returns:
-		- None
+			None
 		'''
 		if isinstance(image_or_path, str):
 			image = Image.open(image_or_path)
@@ -189,19 +195,18 @@ class Pizzoo:
 					self.draw_pixel((placed_x, placed_y), rgba)
 
 	def draw_gif(self, gif_path, xy=(0, 0), size='auto', loop=False, resample_method=Image.NEAREST, fill='auto'):
-		'''
-		Draws a gif on the animation buffer, starting on current frame. If the gif is larger than the screen, it will be resized to fit the screen.
+		'''Draws a gif on the animation buffer, starting on current frame. If the gif is larger than the screen, it will be resized to fit the screen.
 		
-		Parameters:
-		- gif_path (str): The path to the gif file.
-		- xy (tuple(int, int)): The coordinates to start drawing the gif at.
-		- size (tuple(int, int) | str): The size to resize the gif to. If 'auto' is given, width and height of the gif will be used and resized if needed to fit the screen.
-		- loop (bool): Whether to loop the gif or not.
-		- resample_method (Resampling): The resample mode to use when resizing the gif to fit the screen. Default is Image.NEAREST.
-		- fill (tuple(int, int, int) | str): The color to fill the screen with before drawing the gif. If 'auto' is given, the color will be black.
+		Args:
+			gif_path (str): The path to the gif file.
+			xy (tuple(int, int)): The coordinates to start drawing the gif at.
+			size (tuple(int, int) | str): The size to resize the gif to. If 'auto' is given, width and height of the gif will be used and resized if needed to fit the screen.
+			loop (bool): Whether to loop the gif or not.
+			resample_method (Resampling): The resample mode to use when resizing the gif to fit the screen. Default is Image.NEAREST.
+			fill (tuple(int, int, int) | str): The color to fill the screen with before drawing the gif. If 'auto' is given, the color will be black.
 
 		Returns:
-		- None
+			None
 		'''
 		current_frame = self.__current_frame if self.__current_frame >= 0 else 0
 		gif = Image.open(gif_path)
@@ -238,21 +243,20 @@ class Pizzoo:
 		return self.__fonts[font_name]
 
 	def draw_text(self, text, xy=(0, 0), font='default', color='#FFFFFF', align=0, line_width='auto', shadow=None, shadow_rgb=(0, 0, 0)):
-		'''
-		Draws a text on the current frame at the given coordinates.
+		'''Draws a text on the current frame at the given coordinates.
 
-		Parameters:
-		- text (str): The text to draw.
-		- xy (tuple(int, int)): The coordinates of the top-left corner of the text.
-		- font (str): The name of the font to use. Default is 'default'.
-		- color (tuple(int, int, int) | int | string): The color to draw the text with.
-		- align (int): The alignment of the text. 0 is left, 1 is center and 2 is right.
-		- shadow (str | tuple | None): The type of shadow to add to the text. Values are 'horizontal', 'vertical', 'diagonal', tuple with displacements, or None.
-        - shadow_rgb (tuple(int, int, int) | int | string): The color of the shadow.
-		- line_width (int): The maximum width of the text. Default is 'auto'.
+		Args:
+			text (str): The text to draw.
+			xy (tuple(int, int)): The coordinates of the top-left corner of the text.
+			font (str): The name of the font to use. Default is 'default'.
+			color (tuple(int, int, int) | int | string): The color to draw the text with.
+			align (int): The alignment of the text. 0 is left, 1 is center and 2 is right.
+			shadow (str | tuple | None): The type of shadow to add to the text. Values are 'horizontal', 'vertical', 'diagonal', tuple with displacements, or None.
+        	shadow_rgb (tuple(int, int, int) | int | string): The color of the shadow.
+			line_width (int): The maximum width of the text. Default is 'auto'.
 
 		Returns:
-		- None
+			None
 		'''
 		line_width = self.size if line_width == 'auto' else line_width
 		font = self.__get_font(font)
@@ -303,16 +307,15 @@ class Pizzoo:
 		return width, height
 
 	def draw_line(self, start, end, color):
-		'''
-		Draws a line on the current frame from the start to the end coordinates.
+		'''Draws a line on the current frame from the start to the end coordinates.
 
-		Parameters:
-		- start (tuple(int, int)): The coordinates of the start of the line.
-		- end (tuple(int, int)): The coordinates of the end of the line.
-		- color (tuple(int, int, int) | int | string): The color to draw the line with.
+		Args:
+			start (tuple(int, int)): The coordinates of the start of the line.
+			end (tuple(int, int)): The coordinates of the end of the line.
+			color (tuple(int, int, int) | int | string): The color to draw the line with.
 
 		Returns:
-		- None
+			None
 		'''
 		x0, y0 = start
 		x1, y1 = end
@@ -332,43 +335,40 @@ class Pizzoo:
 				y0 += sy
 
 	def render(self, frame_speed=150):
-		'''
-		Renders the current animation buffer to the Pixoo device. After that it resets the buffer.
+		'''Renders the current animation buffer to the Pixoo device. After that it resets the buffer.
+
 		Take into account that only a max of 60 frames can be rendered at once. So any buffer with more than 60 frames will be truncated.
 
-		Parameters:
-		- frame_speed (int): The speed in milliseconds per frame. Default is 150. (Only useful if more than 1 frame is being rendered)
+		Args:
+			frame_speed (int): The speed in milliseconds per frame. Default is 150. (Only useful if more than 1 frame is being rendered)
 		
 		Returns:
-		- None
+			None
 		'''
 		self.renderer.render(self.__buffer, frame_speed)
 		self.reset_buffer()
 
 	def switch(self, on=True):
-		'''
-		Turns the device on or off.
+		'''Turns the device on or off.
 		'''
 		self.renderer.switch(on)
 	
 	def get_settings(self):
-		'''
-		Get the current settings from the device.
+		'''Get the current settings from the device.
 
 		Returns:
-		- dict: The current settings of the device.
+			A dict with the current settings of the device.
 		'''
 		return self.renderer.get_settings()
 	
 	def set_brightness(self, brightness):
-		'''
-		Sets the brightness of the device.
+		'''Sets the brightness of the device.
 
-		Parameters:
-		- brightness (int): The brightness value to set. Must be between 0 and 100.
+		Args:
+			brightness (int): The brightness value to set. Must be between 0 and 100.
 
 		Returns:
-		- None
+			None
 		'''
 		self.renderer.set_brightness(brightness)
 	
@@ -529,7 +529,30 @@ class Pizzoo:
 				pending.append({'node': child, 'parent': current, 'props': props})
 		return commands
 
-	def render_template(self, template, use_cache=True):
+	def render_template(self, template, use_cache=False):
+		'''Renders an XML template to the given renderer.
+		
+		This template can have a number of valid tags that are directly supported by the library, but any other renderer can add his own nodes.
+		The template must have a root tag named 'pizzoo' and can have the following tags:
+		* section: A container for other elements. It can have x, y, width, height and position attributes.
+		* rectangle: Draws a rectangle. It can have x, y, width, height, color and filled attributes.
+		* circle: Draws a circle. It can have x, y, radius and color attributes.
+		* text: Draws a text. It can have x, y, color, wrap, shadow, shadowColor and font attributes.
+		* pixel: Draws a single pixel. It can have x, y and color attributes.
+		* image: Draws an image. It can have x, y and src attributes.
+		* line: Draws a line. It can have x, y, x2, y2 and color attributes.
+		Aside from that, any container as section or rectangle can have a position attribute with the following values:
+		* static: x and y are relative to last non-absolute parent
+		* relative: as static, but absolute children are relative to this element
+		* absolute: x and y are absolute to the last relative element or the screen
+
+		Args:
+			template (str): The XML template to render.
+			use_cache (bool): Whether to use the cache or not. Default is False. (Currently not in use)
+
+		Returns:
+			None
+		'''
 		self.cls()
 		commands = self.__compile_template(template)
 		renderer_items = []
