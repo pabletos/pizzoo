@@ -17,35 +17,94 @@ class Renderer:
 	_pizoo = None
 
 	def __init__(self, address, pizzoo, debug):
+		'''
+		A renderer is an object that is used to render the frames on the device. It can be a real device, an emulator or a static image.
+		'''
 		self._debug = debug
 		self._address = address
 		self._pizzoo = pizzoo
 
 	def get_size(self):
+		'''
+		Returns the size of the device screen.
+
+		Returns:
+			int: The size of the device screen.
+		'''
 		return self._size
 	
 	def get_max_frames(self):
+		'''
+		Returns the maximum amount of frames the device buffer can store.
+
+		Returns:
+			int: The maximum amount of frames the device can store.	
+		'''
 		return self._max_frames
 	
 	def get_settings(self):
+		'''
+		Gets the current settings of the device.
+		'''
 		raise NotImplementedError
 	
 	def set_brightness(self, brightness):
+		'''
+		Sets the brightness of the device.
+
+		Args:
+			brightness (int): The brightness level to set. Between 0 and 100.
+		'''
 		raise NotImplementedError
 	
 	def switch(self, on=True):
+		'''
+		Turns the device on or off.
+
+		Args:
+			on (bool): Whether to turn the device on or off.
+		'''
 		raise NotImplementedError
 
 	def render(self, buffer, frame_speed):
+		'''
+		Renders the buffer on the device.
+
+		Args:
+			buffer (list): A list of frames to render on the device.
+			frame_speed (int): The speed at which the frames should be displayed.
+		'''
 		raise NotImplementedError
 	
 	def compile_node(self, node, parent, inherited_props, node_props):
+		'''
+		Compiles an XML node into a command that can be executed on the device.
+
+		Args:
+			node (Element): The XML node to compile.
+			parent (Element): The parent XML node.
+			inherited_props (dict): The properties inherited from the parent node.
+			node_props (dict): The properties of the current node.
+		'''
 		return None
 
 	def compile_node_root_options(self, options):
+		'''
+		Compiles the root options of the XML into a list of commands that can be executed on the device.
+
+		Args:
+			options (dict): The options of the root node.
+		'''
 		return []
 
 	def render_template_items(self, items, use_cache=True):
+		'''
+		Renders or process a list of items on the device.
+
+		Args:
+			items (list): A list of items to render on the device.
+			use_cache (bool): Whether to use the cache or not.
+		'''
 		return None
 
 class Pixoo64Renderer(Renderer):
@@ -54,6 +113,10 @@ class Pixoo64Renderer(Renderer):
 	__url = None
 	__id_limit = None
 	def __init__(self, address, pizzoo, debug):
+		'''
+		This renderer is used to render the frames on the Divoom Pixoo64 device. It uses the Divoom API to send the frames to the device.
+		Also includes some built-in methods for controlling the device like the buzzer, scoreboard, countdown, etc.
+		'''
 		super().__init__(address, pizzoo, debug)
 		self._size = 64
 		self._max_frames = 60
@@ -91,13 +154,13 @@ class Pixoo64Renderer(Renderer):
 		'''
 		Plays a sound on the device buzzer.
 
-		Parameters:
-		- active (float): The time in seconds the buzzer is active.
-		- inactive (float): The time in seconds the buzzer is inactive.
-		- duration (float): The total time in seconds the buzzer will play.
+		Args:
+			active (float): The time in seconds the buzzer is active.
+			inactive (float): The time in seconds the buzzer is inactive.
+			duration (float): The total time in seconds the buzzer will play.
 
 		Returns:
-		- None
+			None
 		'''
 		self.__request('Device/PlayBuzzer', {
 			'ActiveTimeInCycle': active * 1000,
@@ -109,12 +172,12 @@ class Pixoo64Renderer(Renderer):
 		'''
 		Sets the scoreboard on the device for every team.
 
-		Parameters:
-		- blue_score (int): The score for the blue team.
-		- red_score (int): The score for the red team.
+		Args:
+			blue_score (int): The score for the blue team.
+			red_score (int): The score for the red team.
 
 		Returns:
-		- None
+			None
 		'''
 		self.__request('Tools/SetScoreBoard', {
 			'BlueScore': blue_score,
@@ -125,11 +188,11 @@ class Pixoo64Renderer(Renderer):
 		'''
 		Creates and starts the countdown timer on the device.
 
-		Parameters:
-		- seconds (int): The amount of seconds to countdown from.
+		Args:
+			seconds (int): The amount of seconds to countdown from.
 
 		Returns:
-		- None
+			None
 		'''
 		minutes = int(seconds / 60)
 		seconds = seconds % 60
@@ -144,11 +207,11 @@ class Pixoo64Renderer(Renderer):
 		'''
 		Stops the countdown timer on the device.
 
-		Parameters:
-		- None
+		Args:
+			None
 
 		Returns:
-		- int: Elapsed time in seconds
+			int: Elapsed time in seconds
 		'''
 		self.__request('Tools/SetTimer', {
 			'Status': 0
@@ -176,16 +239,16 @@ class Pixoo64Renderer(Renderer):
 		Sets the dial on the device with the given items. These are networking commands on the pixoo device that manage things like temperature, weather, time, etc.
 		Most of them just auto-update, so it's useful for creating custom dials (Like watchfaces, for example).
 		
-		Parameters:
-		- items (list(dict)): A list of items to display on the dial. Each item should have at least a 'DisplayType' type.
-		- background (str): The path to an image to use as the background of the dial. Default is None.
-		- clear (bool): Whether to send a network clear for the current text on the device or not. Default is True.
+		Args:
+			items (list(dict)): A list of items to display on the dial. Each item should have at least a 'DisplayType' type.
+			background (str): The path to an image to use as the background of the dial. Default is None.
+			clear (bool): Whether to send a network clear for the current text on the device or not. Default is True.
 
 		Returns:
-		- None
+			None
 
 		Note: This method is pretty raw and depends on knowing the exact parameters to send to the device. It's recommended to use the higher-level render_template method.
-		If needed additional documentation can be found on the official API (https://doc.divoom-gz.com/web/#/12?page_id=234).
+		If needed additional documentation [can be found on the official API](https://doc.divoom-gz.com/web/#/12?page_id=234).
 		'''
 		if background is not None:
 			path_ext = background.split('.')[-1]
@@ -306,6 +369,9 @@ class Pixoo64Renderer(Renderer):
 
 class ImageRenderer(Renderer):
 	def __init__(self, address, pizzoo, debug, resize_factor=5, resample_method=Image.NEAREST):
+		'''
+		This renderer creates a static image or gif with the frames and saves it to the disk. It can be used for debugging or demo purposes.
+		'''
 		super().__init__(address, pizzoo, debug)
 		self._size = 64
 		self._max_frames = 60
@@ -370,6 +436,9 @@ class ImageRenderer(Renderer):
 
 class WindowRenderer(Renderer):
 	def __init__(self, address, pizzoo, debug):
+		'''
+		This renderer creates a window with a canvas to render the frames on the screen. It can be used for debugging or testing purposes.
+		'''
 		super().__init__(address, pizzoo, debug)
 		self._size = 64
 		self._max_frames = 60
@@ -398,7 +467,7 @@ class WindowRenderer(Renderer):
 
 	def render(self, buffer, frame_speed):
 		'''
-		The static render creates an image (if one frame) or a gif (if multiple frames) and then shows and returns it.
+		The static render creates an image (if one frame) or a gif (if multiple frames) and then displays it on the window.
 		'''
 		buffer = buffer[-self._max_frames:]
 		wh = self._size * self._resize_factor

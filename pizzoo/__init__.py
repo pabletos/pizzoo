@@ -534,17 +534,18 @@ class Pizzoo:
 		
 		This template can have a number of valid tags that are directly supported by the library, but any other renderer can add his own nodes.
 		The template must have a root tag named 'pizzoo' and can have the following tags:
-		* section: A container for other elements. It can have x, y, width, height and position attributes.
-		* rectangle: Draws a rectangle. It can have x, y, width, height, color and filled attributes.
-		* circle: Draws a circle. It can have x, y, radius and color attributes.
-		* text: Draws a text. It can have x, y, color, wrap, shadow, shadowColor and font attributes.
-		* pixel: Draws a single pixel. It can have x, y and color attributes.
-		* image: Draws an image. It can have x, y and src attributes.
-		* line: Draws a line. It can have x, y, x2, y2 and color attributes.
+
+		* section - A container for other elements. It can have x, y, width, height and position attributes.
+		* rectangle - Draws a rectangle. It can have x, y, width, height, color and filled attributes.
+		* circle - Draws a circle. It can have x, y, radius and color attributes.
+		* text - Draws a text. It can have x, y, color, wrap, shadow, shadowColor and font attributes.
+		* pixel - Draws a single pixel. It can have x, y and color attributes.
+		* image - Draws an image. It can have x, y and src attributes.
+		* line - Draws a line. It can have x, y, x2, y2 and color attributes.
 		Aside from that, any container as section or rectangle can have a position attribute with the following values:
-		* static: x and y are relative to last non-absolute parent
-		* relative: as static, but absolute children are relative to this element
-		* absolute: x and y are absolute to the last relative element or the screen
+		* static - x and y are relative to last non-absolute parent
+		* relative - as static, but absolute children are relative to this element
+		* absolute - x and y are absolute to the last relative element or the screen
 
 		Args:
 			template (str): The XML template to render.
