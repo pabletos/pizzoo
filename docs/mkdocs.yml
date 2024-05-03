@@ -2,15 +2,39 @@ site_name: Pizzoo
 nav:
   - Introduction: index.md
   - Installation: installation.md
-  - Quick Start: quickstart.md
+  - Getting started:
+    - Drawing and animating: drawing.md
+    - Building your first game: game.md
   - API reference: api.md
+repo_url: https://github.com/pabletos/pizzoo
 theme:
-  name: mkdocs
+  name: material
   color_mode: dark
   navigation_depth: 3
   nav_style: primary
   user_color_mode_toggle: true
+  logo: assets/images/logo.png
+  favicon: assets/images/logo.png
+  features:
+    - search.suggest
+    - navigation.expand
+    - navigation.path
+    - toc.integrate
+    - navigation.footer
+  palette:
+    scheme: slate
+    primary: pink
+  font:
+    text: Lato
+    code: Roboto Mono
+extra:
+  social:
+    - icon: fontawesome/brands/linkedin
+      link: https://www.linkedin.com/in/pablo-huet-carrasco/
+    - icon: fontawesome/brands/github
+      link: https://github.com/pabletos
 plugins:
+- search
 - mkdocstrings:
     handlers:
       python:
@@ -25,3 +49,16 @@ plugins:
           show_signature: true # default is true, adds parameters to name
           separate_signature: true
     default_handler: python
+markdown_extensions:
+  - attr_list
+  - md_in_html
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.superfences
+  - admonition
+  - pymdownx.details
+

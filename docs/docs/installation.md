@@ -18,8 +18,13 @@ Everything should be installed correctly if you don't see any errors.
 
 This section assumes that you are using the library to connect to a [Pixoo64 device](https://divoom.com/es/products/pixoo-64), if you want to use the library for rendering on another device or simply use a different renderer, just [check this section instead]().
 
+!!! note
+
+	Network scanning for automatic Pixoo64 connection is an already planned feature, however, this seems like a relatively big feature for so little gain, so it's not something planned until some other fixes and improvements are done.
+
 ### Get your device IP
 Currently the Pixoo64 renderer has no auto-find feature enabled, so you have to get your device IP first, for doing so:
+
 1. Open your Divoom app on your phone.
 2. Go to the first section, the one related to your device.
 3. Click on your device name.
@@ -28,9 +33,13 @@ Currently the Pixoo64 renderer has no auto-find feature enabled, so you have to 
 ### Initialize your Pizzoo instance
 For creating and initializing your Pizzoo instance you only need to be connected to the same local network and initialize it this way:
 ```python
+from pizzoo import Pizzoo
+
 pizzoo = Pizzoo('192.168.xx.xxx', debug=True)
 ```
-Where `192.168.xx.xxx` is the local IP of your Pixoo64 device. Now you are ready to start playing with it!
+Where `192.168.xx.xxx` is the local IP of your Pixoo64 device.
+
+Now you are ready to start playing with it!
 
 ### Simple connection test
 If the connection fails, an error should be trown, but if that doesn't happen and you're not sure if it's working, you can then do:
