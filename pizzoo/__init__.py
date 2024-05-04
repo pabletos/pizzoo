@@ -572,4 +572,4 @@ class Pizzoo:
 		raise AttributeError(f"'{self.__class__.__name__}' object has no attribute '{name}'")
 
 
-__all__ = (Pizzoo, Renderer, ImageRenderer, WindowRenderer)
+__all__ = (Pizzoo, Renderer, Pixoo64Renderer, ImageRenderer, WindowRenderer)
