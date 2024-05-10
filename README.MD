@@ -7,14 +7,14 @@
 	target='_blank'
 	rel="noreferrer"
 	>
-	<img height='24' style="border:0px; height:24px" src='https://img.shields.io/badge/donate-blue?logo=ko-fi&logoColor=%23ffffff' border='0' alt='Buy Me a Coffee at ko-fi.com' />
+	<img height='24' style={{border:"0px", height:"24px"}} src='https://img.shields.io/badge/donate-blue?logo=ko-fi&logoColor=%23ffffff' border='0' alt='Buy Me a Coffee at ko-fi.com' />
 	</a>
 	<a
 	href='https://pypi.org/project/pizzoo/'
 	target='_blank'
 	rel="noreferrer"
 	>
-	<img height='24' style="text-decoration:none;" src="https://img.shields.io/badge/version-0.9.0-blue?logo=pypi&logoColor=%23ffffff"/>
+	<img height='24' style={{textDecoration:none}} src="https://img.shields.io/badge/version-0.9.0-blue?logo=pypi&logoColor=%23ffffff"/>
 	</a>
 	</a>
 	<img height='24' style="text-decoration:none;" src="https://img.shields.io/badge/status-beta-yellow"/>
