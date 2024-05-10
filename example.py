@@ -2,7 +2,7 @@ from pizzoo import Pizzoo, WindowRenderer, ImageRenderer
 from time import sleep
 
 '''Create the main object and the connection to the Pixoo device'''
-pizzoo = Pizzoo('192.168.50.225', renderer=ImageRenderer, debug=True)
+pizzoo = Pizzoo('192.168.50.225', debug=True)
 pizzoo.switch(on=True) # Turn on the Pixoo device screen
 
 def example_draw_pixel():
@@ -131,6 +131,11 @@ def power_off():
 	'''
 	pizzoo.turn_screen(on=False)
 
+def example_game():
+	from games.zombieGame import ZombieGame
+	game = ZombieGame(pizzoo)
+	game.start()
+
 if __name__ == '__main__':
 	# create a terminal menu to select the example to run
 	selected_option = None
@@ -144,7 +149,8 @@ if __name__ == '__main__':
 		'7': {'Buzzer': example_buzzer},
 		'8': {'Countdown': example_countdown},
 		'9': {'Render an XML template': example_template},
-		'10': {'Advanced Animation': example_advanced_animation}
+		'10': {'Advanced Animation': example_advanced_animation},
+		'11': {'Game': example_game}
 	}
 	print('Select an example to run:')
 	for key, value in menu.items():

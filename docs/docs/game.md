@@ -1,5 +1,7 @@
 # Building your first game
 
+!!! warning "**This feature and the documentation is still a work in progress, if you have any feedback or suggestions, please let us know!**"
+
 Included with this library is also a pretty simple `Game` class that can be used to create little games that can be played on a renderer (With direct support for the Pixoo64 device).
 
 !!! info "**Game framerate on the Pixoo64 is really low**"
