@@ -7,8 +7,17 @@
 	target='_blank'
 	rel="noreferrer"
 	>
-	<img height='36' style={{border:'0px', height:'36px'}} src='https://storage.ko-fi.com/cdn/kofi2.png?v=3' border='0' alt='Buy Me a Coffee at ko-fi.com' />
+	<img height='24' style="border:0px; height:24px" src='https://img.shields.io/badge/donate-blue?logo=ko-fi&logoColor=%23ffffff' border='0' alt='Buy Me a Coffee at ko-fi.com' />
 	</a>
+	<a
+	href='https://pypi.org/project/pizzoo/'
+	target='_blank'
+	rel="noreferrer"
+	>
+	<img height='24' style="text-decoration:none;" src="https://img.shields.io/badge/version-0.9.0-blue?logo=pypi&logoColor=%23ffffff"/>
+	</a>
+	</a>
+	<img height='24' style="text-decoration:none;" src="https://img.shields.io/badge/status-beta-yellow"/>
 </p>
 
 Pizzoo is a robust Python library designed for developers who want to unlock the full potential of matrix LED displays, particularly the Pixoo64, a 64x64 pixel LED display, and extend its functionalities to various other devices. Whether you're looking to create dynamic animations, develop interactive games, or integrate unique display functionalities, Pizzoo provides you with the tools and flexibility to innovate and express your creative ideas.
@@ -95,3 +104,9 @@ There's also have a dedicated section for this on our docs.
 
 ## Do you want to know more?
 [Here's](pizzoo.pablohuet.com) a dedicated page for documentation with a lot of examples so you can get quickly started.
+
+## Contribute and/or donate
+This library was created and is maintained by a single developer, consider contributing with pull requests, new integrations, proposals or [simply by doing a small donation on ko-fi](https://ko-fi.com/B0B1PYK0W).
+
+## Special thanks
+This library exists thanks to other libraries that were an inspiration, specially the [Pixoo](https://github.com/SomethingWithComputers/pixoo) library by SomethingWithComputers and the [Matrix-Fonts](https://github.com/trip5/Matrix-Fonts/tree/main) matrix bdf font collection by trip5.
