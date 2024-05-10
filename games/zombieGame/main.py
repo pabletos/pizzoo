@@ -6,8 +6,8 @@ from .constants import BASE
 from os.path import join
 
 class ZombieGame(PizzooGame):
-	def __init__(self, pixoo_instance):
-		super().__init__(pixoo_instance, frame_limit=60, dev=True)
+	def __init__(self, pizzoo_instance):
+		super().__init__(pizzoo_instance, frame_limit=60, dev=True)
 		self.player = Player(0, 0, self, 0)
 		self.add_instance(self.player)
 		self.projectiles = []
@@ -15,8 +15,8 @@ class ZombieGame(PizzooGame):
 		self.init_level()
 		self.create_camera(center_on=self.player)
 		self.critter_spawn_ratio = {
-			Spitter: 0.3,
-			Zombie: 1
+			Spitter: 0.1,
+			Zombie: 0.9
 		}
 
 	def init_level(self):

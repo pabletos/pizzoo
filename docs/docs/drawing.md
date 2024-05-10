@@ -3,7 +3,7 @@
 This section serves as an entry point for start using Pizzoo, first we'll gonna talk about initialization to then lets go through some simple examples that demonstrate the basic functionalities of creating animations and games on your chosen renderer.
 
 ## Initialization
-If you are using the Pixoo64, be sure to first know wich IP it has, a [complete guide is found here](/installation/#simple-connection-test). If you are using any of the other included renderers (A static image/gif renderer or a window renderer) you can change them on the initialization:
+If you are using the Pixoo64, be sure to first know wich IP it has, a [complete guide is found here](installation.md#simple-connection-test). If you are using any of the other included renderers (A static image/gif renderer or a window renderer) you can change them on the initialization:
 ```python
 import  ImageRenderer, WindowRenderer from pizzoo
 

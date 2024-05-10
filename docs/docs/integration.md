@@ -89,8 +89,18 @@ In case that you don't return a function on the first member of the tuple, the c
 Aside from the discussed `Pixoo64Renderer`, there are two other simple renderers included:
 
 - `ImageRenderer`: This renderer is a static image renderer that can be used to test the library without any physical device. It will render the full animation buffer on a single frame and show it on a window.
+```python
+from pizzoo import ImageRenderer, Pizzoo
+
+pizzoo = Pizzoo('', render=ImageRenderer) #Address is not needed
+```
 
 - `WindowRenderer`: A simple and basic renderer that will render the full animation buffer on a single frame and show it on a window. This renderer is used to test the library without any physical device, and on the current iteration lacks a lot of features and functionality.
+```python
+from pizzoo import WindowRenderer, Pizzoo
+
+pizzoo = Pizzoo('', render=WindowRenderer) #Address is not needed
+```
 
 You can use these renderers as a base to create your own renderer, or you can create a new renderer from scratch.
 

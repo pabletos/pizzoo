@@ -35,3 +35,10 @@ This page gives an overview of all public pizzoo objects, functions and methods.
 			- "!^_"
 			- "!^__"
 			- "^__init__"
+
+::: pizzoo.game
+	options:
+		filters:
+			- "!^_"
+			- "!^__"
+			- "^__init__"

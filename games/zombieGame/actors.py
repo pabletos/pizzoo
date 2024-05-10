@@ -82,7 +82,7 @@ class Zombie(Actor):
 		]
 		super().__init__(x, y, frame_src, game, base_path=BASE, z_index=z_index)
 		self.health = 1
-		self.speed = [.5, .5]
+		self.speed = [.25, .25]
 		self.direction = [0, 0]
 		self.g = game
 		self.player = player
@@ -125,7 +125,7 @@ class Spitter(Actor):
 		super().__init__(x, y, frame_src, game, base_path=BASE, z_index=z_index)
 		self.max_shoot_distance = 32
 		self.health = 1
-		self.speed = [.5, .5]
+		self.speed = [.25, .25]
 		self.direction = [0, 0]
 		self.g = game
 		self.player = player
@@ -144,19 +144,19 @@ class Spitter(Actor):
 			self.shoot_cooldown -= 1
 		if distance((self.x, self.y), (self.player.x, self.player.y)) > self.max_shoot_distance:
 			if self.x > self.player.x:
-				self.x -= 1
+				self.x -= self.speed[0]
 				self.direction[0] = -1
 				self.sprite.set_frame(2)
 			elif self.x < self.player.x:
-				self.x += 1
+				self.x += self.speed[0]
 				self.direction[0] = 1
 				self.sprite.set_frame(1)
 			if self.y > self.player.y:
-				self.y -= 1
+				self.y -= self.speed[1]
 				self.direction[1] = -1
 				self.sprite.set_frame(3)
 			elif self.y < self.player.y:
-				self.y += 1
+				self.y += self.speed[1]
 				self.direction[1] = 1
 				self.sprite.set_frame(0)
 		elif self.shoot_cooldown == 0:
@@ -191,7 +191,7 @@ class Projectile(Actor):
 			'images/%s' % frame
 		]
 		super().__init__(x, y, frame_src, game, base_path=BASE, z_index=z_index)
-		self.speed = 3
+		self.speed = 2
 		self.direction = direction
 		self.g = game
 		self.interacts_with = interacts_with

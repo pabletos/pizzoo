@@ -16,7 +16,7 @@ Everything should be installed correctly if you don't see any errors.
 
 ## Connect with the device
 
-This section assumes that you are using the library to connect to a [Pixoo64 device](https://divoom.com/es/products/pixoo-64), if you want to use the library for rendering on another device or simply use a different renderer, just [check this section instead]().
+This section assumes that you are using the library to connect to a [Pixoo64 device](https://divoom.com/es/products/pixoo-64), if you want to use the library for rendering on another device or simply use a different renderer, just [check this section instead](integration.md).
 
 !!! note
 
