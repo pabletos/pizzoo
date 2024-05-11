@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://github.com/pabletos/pizzoo/blob/main/docs/docs/assets/images/pizzoo-banner-nobg.png" alt="Pizzoo logo" width="450">
+  <img src="https://raw.githubusercontent.com/pabletos/pizzoo/main/docs/docs/assets/images/pizzoo-banner-nobg.png" alt="Pizzoo logo" width="450">
 </p>
 <p>
 	<a 
@@ -49,7 +49,7 @@ pizzoo.render()
 ```
 
 <p align="center">
-  <img width="320" height="320" src="https://github.com/pabletos/pizzoo/blob/main/docs/docs/assets/images/qs-2.png">
+  <img width="320" height="320" src="https://raw.githubusercontent.com/pabletos/pizzoo/main/docs/docs/assets/images/qs-2.png">
 </p>
 
 ## Creating animations
@@ -67,7 +67,7 @@ pizzoo.render(frame_speed=100)
 ```
 
 <p align="center">
-	<img width="320" height="320" src="https://github.com/pabletos/pizzoo/blob/main/docs/docs/assets/images/qs-5.gif">
+	<img width="320" height="320" src="https://raw.githubusercontent.com/pabletos/pizzoo/main/docs/docs/assets/images/qs-5.gif">
 </p>
 
 
@@ -104,7 +104,7 @@ pizzoo.render_template('''
 ```
 
 <p align="center">
-	<img width="320" height="320" src="https://github.com/pabletos/pizzoo/blob/main/docs/docs/assets/images/qs-6.png">
+	<img width="320" height="320" src="https://raw.githubusercontent.com/pabletos/pizzoo/main/docs/docs/assets/images/qs-6.png">
 </p>
 
 
