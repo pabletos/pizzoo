@@ -1,14 +1,16 @@
 from setuptools import setup
 
+long_description = open('#').read()
+
+# https://packaging.python.org/en/latest/guides/distributing-packages-using-setuptools/
 setup(
     name="pizzoo",
-    version="0.9.0",
+    version="0.9.3",
     author="Pablo Huet",
-    description=(
-        "Pizzoo is a library for rendering on pixel matrix screens, with direct support for the Divoom Pixoo64 device, and easy integration for any other one.",
-        "It includes full animation buffer manipulation, a micro game engine, as well as XML/HTML like templates compilation.",
-    ),
-    license="MIT",
+    description="Pizzoo is a easy-to-use library for rendering on pixel matrix screens like the Pixoo64, featuring easy new device integration, animation tools, and XML template rendering support.",
+    long_description=long_description,
+	long_description_content_type='text/markdown',
+	license="MIT",
     keywords="pixoo, pixoo64, divoom, screen, pixel, matrix, render, buffer, LED matrix, LED, raspberry, raspberry pi",
     url="https://github.com/pabletos/pizzoo#readme",
     packages=['pizzoo'],
