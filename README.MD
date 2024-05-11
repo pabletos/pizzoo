@@ -31,7 +31,7 @@ Pizzoo is a robust Python library designed for developers who want to unlock the
 	Our built-in compiler supports an XML/HTML-like language for template processing. This facilitates the design of UIs with relative positioning, defined areas, and reusable components, helping you creating fast and reusable interfaces.
 
 * **Flexible integration with any device**:
-	The Renderer class can be easily extended to support additional methods and integrate with various hardware. This ensures that Pizzoo can adapt to your specific project and hardware requirements.
+	Even with the Pixoo64 being the default target, the Renderer class can be easily extended to support additional methods and integrate with various hardware. This ensures that Pizzoo can adapt to your specific project and hardware requirements.
 
 * **Game Development Toolkit**:
 	Tap into the possibilities of micro game development with our mini game engine. Design, develop, and deploy small-scale games that can be played right on your LED devices, perfect for creating engaging interactive experiences.
