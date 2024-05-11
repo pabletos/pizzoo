@@ -39,8 +39,6 @@ Pizzoo is a robust Python library designed for developers who want to unlock the
 ## Drawing on your device
 Frame manipulation is the core of the `pizzoo` library. Every time the library is created and the `render` method is called, the buffer is filled with a new frame we can use to draw on. Lets start by drawing three pixels on the screen and rendering:
 
-<img align="right" width="160" height="160" src="https://github.com/pabletos/pizzoo/blob/main/docs/docs/assets/images/qs-2.png">
-
 ```python
 pizzoo.cls()
 pizzoo.draw_circle((31, 31), 10, '#00ff00', filled=True) # Green circle, filled
@@ -50,10 +48,12 @@ pizzoo.draw_line((0, 31), (63, 31), (255, 255, 0)) # Yellow line, tuple rgb colo
 pizzoo.render()
 ```
 
+<p align="center">
+  <img width="320" height="320" src="https://github.com/pabletos/pizzoo/blob/main/docs/docs/assets/images/qs-2.png">
+</p>
+
 ## Creating animations
 Aside from simple gif drawing (That is also supported), custom animations can be created using frame-by-frame manipulation. As an example:
-
-<img align="right" width="160" height="160" src="https://github.com/pabletos/pizzoo/blob/main/docs/docs/assets/images/qs-5.gif">
 
 ```python
 '''
@@ -66,10 +66,13 @@ for i in range(0, 54):
 pizzoo.render(frame_speed=100)
 ```
 
+<p align="center">
+	<img width="320" height="320" src="https://github.com/pabletos/pizzoo/blob/main/docs/docs/assets/images/qs-5.gif">
+</p>
+
+
 ## Rendering templates
 The most powerful feature of this library is the ability of render templates. Custom XML/HTML like templates can be made to create images, Pixoo64 dials and even reusable parts or components.
-
-<img align="right" width="160" height="160" src="https://github.com/pabletos/pizzoo/blob/main/docs/docs/assets/images/qs-6.png">
 
 ```python
 '''
@@ -99,6 +102,11 @@ pizzoo.render_template('''
 	</pizzoo>
 ''')
 ```
+
+<p align="center">
+	<img width="320" height="320" src="https://github.com/pabletos/pizzoo/blob/main/docs/docs/assets/images/qs-6.png">
+</p>
+
 
 There's also have a dedicated section for this on our docs.
 
