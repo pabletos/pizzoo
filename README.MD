@@ -42,6 +42,14 @@ Pizzoo is a robust Python library designed for developers who want to unlock the
 * **Game Development Toolkit**:
 	Tap into the possibilities of micro game development with our mini game engine. Design, develop, and deploy small-scale games that can be played right on your LED devices, perfect for creating engaging interactive experiences.
 
+## Install
+
+Just use pip to install the package:
+```bash
+pip install pizzoo
+```
+That's it! Everything should be installed correctly and pizzoo is ready to be used!
+
 ## Drawing on your device
 Frame manipulation is the core of the `pizzoo` library. Every time the library is created and the `render` method is called, the buffer is filled with a new frame we can use to draw on. Lets start by drawing three pixels on the screen and rendering:
 

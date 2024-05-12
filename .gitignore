@@ -1,1 +1,7 @@
 pizzoo/__pycache__/
+pizzoo.egg-info/
+*.tar.gz
+/build/*
+*.whl
+build.bat
+/docs/site/*
