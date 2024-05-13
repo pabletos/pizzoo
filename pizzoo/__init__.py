@@ -32,7 +32,7 @@ class Pizzoo:
 		# Initialize buffer
 		self.add_frame()
 		# get current dir of this file:
-		self.load_font('default', join(self.__current_dir, 'MatrixLight6.bdf'), False)
+		self.load_font('default', join(self.__current_dir, 'default.bdf'), False)
 
 	def __compute_device_specs(self):
 		self.size = self.renderer.get_size()
