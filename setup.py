@@ -1,11 +1,11 @@
 from setuptools import setup
 
-long_description = open('#').read()
+long_description = open('%s\\README.md' % 'C:\\Users\\Usuario\\Documents\\Projects\\pizzoo', encoding='utf-8').read()
 
 # https://packaging.python.org/en/latest/guides/distributing-packages-using-setuptools/
 setup(
     name="pizzoo",
-    version="0.9.3",
+    version="0.9.7",
     author="Pablo Huet",
     description="Pizzoo is a easy-to-use library for rendering on pixel matrix screens like the Pixoo64, featuring easy new device integration, animation tools, and XML template rendering support.",
     long_description=long_description,
@@ -13,7 +13,10 @@ setup(
 	license="MIT",
     keywords="pixoo, pixoo64, divoom, screen, pixel, matrix, render, buffer, LED matrix, LED, raspberry, raspberry pi",
     url="https://github.com/pabletos/pizzoo#readme",
+	include_package_data=True,
     packages=['pizzoo'],
+	package_dir={'pizzoo': 'pizzoo'},
+	package_data={'pizzoo': ['*.bdf']},
     install_requires=[
         'requests ~= 2.31.0',
         'Pillow ~= 10.0.0',
