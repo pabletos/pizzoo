@@ -247,7 +247,7 @@ class Pizzoo:
 
 		Args:
 			text (str): The text to draw.
-			xy (tuple(int, int)): The coordinates of the top-left corner of the text.
+			xy (tuple(int | ('center', 'right', 'left), int | ('top', 'center', 'bottom'))): The coordinates of the top-left corner of the text.
 			font (str): The name of the font to use. Default is 'default'.
 			color (tuple(int, int, int) | int | string): The color to draw the text with.
 			align (int): The alignment of the text. 0 is left, 1 is center and 2 is right.
@@ -258,8 +258,8 @@ class Pizzoo:
 		Returns:
 			None
 		'''
-		line_width = self.size if line_width == 'auto' else line_width
 		font = self.__get_font(font)
+		line_width = self.size if line_width == 'auto' else line_width
 		rgb = get_color_rgb(color)
 		bitmap = font.draw(text, missing='?', linelimit=line_width)
 		if shadow is not None:
@@ -276,6 +276,7 @@ class Pizzoo:
 			bitmap.shadow(shadow_displacement[0], shadow_displacement[1])
 		text_data = bitmap.todata(2)
 		width, height = bitmap.width(), bitmap.height()
+		xy = self.__compute_text_coords(text, xy, width, height, (0, 0))
 		for x in range(width):
 			for y in range(height):
 				if text_data[y][x]:
@@ -371,6 +372,40 @@ class Pizzoo:
 			None
 		'''
 		self.renderer.set_brightness(brightness)
+
+	def __compute_x_text_position(self, text_width, position, padding):
+		if isinstance(position, int):
+			return position
+		res = padding
+		if text_width >= self.size:
+			return res
+		if position == 'left':
+			res = padding
+		elif position == 'center':
+			res = floor((self.size - text_width) / 2)
+		elif position == 'right':
+			res = self.size - text_width - padding
+		return res
+
+	def __compute_y_text_position(self, text_height, position, padding):
+		if isinstance(position, int):
+			return position
+		res = padding
+		if position == 'top':
+			res = padding
+		elif position == 'center':
+			res = floor((self.size - text_height) / 2)
+		elif position == 'bottom':
+			res = self.size - text_height - padding
+		return res
+
+	def __compute_text_coords(self, text, xy, width, height, paddings):
+		if isinstance(xy, str) and xy == 'center':
+			xy = ('center', 'center')
+		return (
+			self.__compute_x_text_position(width, xy[0], paddings[0]),
+			self.__compute_y_text_position(height, xy[1], paddings[1])
+		)
 	
 	def __node_position(self, x, y, position, prev_x, prev_y, rel_x, rel_y):
 		'''

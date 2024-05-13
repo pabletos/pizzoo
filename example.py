@@ -37,9 +37,9 @@ def example_draw_text():
 	pizzoo.load_font('artos', './files/ArtosSans-8.bdf')
 	pizzoo.load_font('amstrad', './files/amstrad_cpc_extended.bdf')
 	pizzoo.cls((255, 255, 255))
+	pizzoo.draw_text('This is a pretty big text using the default font for the library.', xy=('center', 24), color='#000000', line_width=62) # Default font, custom line width
 	pizzoo.draw_text('Amstrad', xy=(2, 2), font='amstrad', color='#00ff00') # Custom amstrad font, no wrap is defined
-	pizzoo.draw_text('Artos', xy=(2, 12), font='artos', color=(255, 0, 0), line_width='auto') # Custom artos font, wrap is 'auto' so full device width (64px)
-	pizzoo.draw_text('This is a pretty big text using the default font for the library.', xy=(1, 24), color='#000000', line_width=62) # Default font, custom line width
+	pizzoo.draw_text('Artos', xy=('right', 12), font='artos', color=(255, 0, 0), line_width='auto') # Custom artos font, wrap is 'auto' so full device width (64px)
 	pizzoo.render()
 
 def example_draw_image():
