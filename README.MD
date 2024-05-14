@@ -133,4 +133,4 @@ This library was created and is maintained by a single developer, consider contr
 ## Special thanks
 This library exists thanks to other libraries that were an inspiration, specially the [Pixoo](https://github.com/SomethingWithComputers/pixoo) library by SomethingWithComputers and the [Matrix-Fonts](https://github.com/trip5/Matrix-Fonts/tree/main) matrix bdf font collection by trip5.
 
-Also I want to give a special thanks [to my lovely fiancee](https://github.com/srtashadowfax) for all his support while developing this library, both technical and emotional 💖
+Also I want to give a special thanks [to my lovely fiancee](https://github.com/srtashadowfax) for all her support while developing this library, both technical and emotional 💖
