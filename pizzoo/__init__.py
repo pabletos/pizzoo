@@ -496,21 +496,20 @@ class Pizzoo:
 			radius = int(node.attrib.get('radius', '8'))
 			result = (self.draw_circle, {'xy': (abs_x, abs_y), 'radius': radius, 'color': color})
 		elif tag == 'text':
-			color = get_color_rgb(node.attrib.get('color', '7'))
-			shadow = node.attrib.get('shadow', None)
-			if shadow and shadow[0] == '(' and shadow[-1] == ')':
-				shadow = tuple(int(x) for x in shadow[1:-1].split(','))
-			shadow_color = get_color_rgb(node.attrib.get('shadowColor', '0'))
-			font = node.attrib.get('font', 'default')
 			text = node.text
-			wrap = node.attrib.get('wrap', 'false').lower() == 'true'
-			line_width = 'auto'
-			if wrap:
-				width, height = self.__node_size(node, x, y, abs_x, abs_y, new_props)
-				line_width = width
-			if text is None:
-				text = ''
-			result = (self.draw_text, {'text': text, 'xy': (abs_x, abs_y), 'color': color, 'shadow': shadow, 'shadow_rgb': shadow_color, 'font': font, 'line_width': line_width})
+			if text is not None:
+				color = get_color_rgb(node.attrib.get('color', '7'))
+				shadow = node.attrib.get('shadow', None)
+				if shadow and shadow[0] == '(' and shadow[-1] == ')':
+					shadow = tuple(int(x) for x in shadow[1:-1].split(','))
+				shadow_color = get_color_rgb(node.attrib.get('shadowColor', '0'))
+				font = node.attrib.get('font', 'default')
+				wrap = node.attrib.get('wrap', 'false').lower() == 'true'
+				line_width = 'auto'
+				if wrap:
+					width, height = self.__node_size(node, x, y, abs_x, abs_y, new_props)
+					line_width = width	
+				result = (self.draw_text, {'text': text, 'xy': (abs_x, abs_y), 'color': color, 'shadow': shadow, 'shadow_rgb': shadow_color, 'font': font, 'line_width': line_width})
 		elif tag == 'pixel':
 			color = get_color_rgb(node.attrib.get('color', '7'))
 			result = (self.draw_pixel, {'xy': (abs_x, abs_y), 'rgb': color})
@@ -535,9 +534,9 @@ class Pizzoo:
 		result = []
 		attribs = root.attrib
 		brigthness = attribs.get('brightness', None)
-		turn_screen = bool(attribs.get('turnOn', False))
-		clear = bool(attribs.get('clear', False))
-		notification = bool(attribs.get('notification', False))
+		turn_screen = attribs.get('turnOn', 'false').lower() == 'true'
+		clear = attribs.get('clear', 'false').lower() == 'true'
+		notification = attribs.get('notification', 'false').lower() == 'true'
 		if clear is True:
 			result.append((self.cls, {}))
 		options = {
