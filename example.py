@@ -106,6 +106,7 @@ def example_template():
 					<rectangle x="0" y="0" width="100%" height="100%" color="#FFFFFF" filled="true" />
 					<section x="1" y="1" width="51" height="51">
 						<text x="0" y="0" color="#000000" wrap="true">Long text wrapped</text>
+						<text x="0" y="50%" color="#000000" wrap="true">2.8K</text>
 						<text x="10" y="80%" shadow="diagonal" color="#FF0000" font="amstrad">Cool</text>
 						<image x="17" y="40%" src="./files/test_image.png" />
 					</section>
