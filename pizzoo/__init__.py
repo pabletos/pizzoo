@@ -107,6 +107,25 @@ class Pizzoo:
 		self.__current_frame = -1
 		self.add_frame()
 		return removed_items
+	
+	def get_current_frame(self):
+		'''Returns the current animation frame.
+
+		Returns:
+			The current animation buffer.
+		'''
+		return self.__buffer[self.__current_frame]
+	
+	def set_current_frame(self, frame):
+		'''Sets the current animation frame.
+
+		Args:
+			frame (list(int)): The frame to set as the current frame.
+
+		Returns:
+			None
+		'''
+		self.__buffer[self.__current_frame] = frame
 
 	def draw_pixel(self, xy, color):
 		'''Draws a single pixel on the current frame at the given coordinates.
@@ -535,10 +554,21 @@ class Pizzoo:
 		attribs = root.attrib
 		brigthness = attribs.get('brightness', None)
 		turn_screen = attribs.get('turnOn', 'false').lower() == 'true'
-		clear = attribs.get('clear', 'false').lower() == 'true'
+		clear = attribs.get('clear', 'true').lower() == 'true'
 		notification = attribs.get('notification', 'false').lower() == 'true'
-		if clear is True:
-			result.append((self.cls, {}))
+		# TODO: This background can be a color, image or gif, if gif every frame should add the template render to the buffer
+		'''background = attribs.get('background', None)
+		if background is not None:
+			try:
+				color = get_color_rgb(background)
+				result.append((self.cls, {'rgb': color}))
+			except ValueError:
+				if background.endswith('.gif'):
+					result.append((self.draw_gif, {'gif_path': background, 'xy': (0, 0), 'size': (64, 64), 'loop': True}))
+				else:
+					result.append((self.draw_image, {'image_or_path': background, 'xy': (0, 0), 'size': 'fill-width'}))
+		elif clear is True:
+			result.append((self.cls, {}))'''
 		options = {
 			'brigthness': clamp(int(brigthness), 0, 100) if brigthness is not None else None,
 			'clear': clear,
@@ -588,7 +618,8 @@ class Pizzoo:
 		Returns:
 			None
 		'''
-		self.cls()
+		# TODO: This should depend on the clear property
+		# self.cls()
 		commands = self.__compile_template(template)
 		renderer_items = []
 		for command in commands:

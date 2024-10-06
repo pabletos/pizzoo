@@ -16,7 +16,6 @@ def get_color_rgb(color):
 	if isinstance(color, int):
 		return PICO_PALETTE[color]
 	raise ValueError('Invalid color format')
-	return color
 
 def tuple_to_hex(color_tuple):
 	return '#%02x%02x%02x' % color_tuple

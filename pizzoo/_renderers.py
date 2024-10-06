@@ -265,6 +265,7 @@ class Pixoo64Renderer(Renderer):
 		})
 
 	def render(self, buffer, frame_speed):
+		# TODO: This may improve render speed when sending multi-frame buffers: https://www.reddit.com/r/Divoom_Products/comments/11107e1/comment/j9z776i/?utm_source=share&utm_medium=web3x&utm_name=web3xcss&utm_term=1&utm_content=share_button
 		self.__pic_id += 1
 		if self.__pic_id >= self.__id_limit:
 			self.__reset_pic_id()
