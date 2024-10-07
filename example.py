@@ -115,6 +115,24 @@ def example_template():
 		</pizzoo>
 	''')
 
+def example_template_bg():
+	'''
+	Render an XML template on the Pixoo device with a background gif.
+	'''
+	pizzoo.render_template('''
+		<pizzoo background="./files/test_gif.gif">
+			<rectangle x="0" y="0" width="64" height="8" color="0">
+				<section x="0" y="1">
+					<date format="DD" x="1" color="#ffc107" font="small"></date>
+					<text x="9" color="#ffc107">-</text>
+					<date format="MM" x="13" color="#ffc107" font="small"></date>
+					<time format="HH:mm" x="26" font="small"></time>
+					<date format="WWW" width="63" x="50" color="#ffc107" font="small"></date>
+				</section>
+			</rectangle>
+		</pizzoo>
+	''')
+
 def example_advanced_animation():
 	'''
 	Advanced animation example for creating complex animations adding frames to the buffer.
@@ -150,8 +168,9 @@ if __name__ == '__main__':
 		'7': {'Buzzer': example_buzzer},
 		'8': {'Countdown': example_countdown},
 		'9': {'Render an XML template': example_template},
-		'10': {'Advanced Animation': example_advanced_animation},
-		'11': {'Game': example_game}
+		'10': {'Render a template with a gif background': example_template_bg},
+		'11': {'Advanced Animation': example_advanced_animation},
+		'12': {'Game': example_game}
 	}
 	print('Select an example to run:')
 	for key, value in menu.items():

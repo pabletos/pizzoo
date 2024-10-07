@@ -117,6 +117,8 @@ pizzoo.render_template('''
 ''')
 ```
 
+Template rendering provide a lot of options, including self-updating time, date, weather...(Using tags like <date>, <time> and so on) and even support for using images or gifs as backgrounds (check the examples).
+
 <p align="center">
 	<img width="320" height="320" src="https://raw.githubusercontent.com/pabletos/pizzoo/main/docs/docs/assets/images/qs-6.png">
 </p>
