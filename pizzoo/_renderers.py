@@ -130,7 +130,7 @@ class Pixoo64Renderer(Renderer):
 		data = {'Command': endpoint, **(data if data else {})}
 		result = post(self.__url, dumps(data)).json()
 		if result['error_code'] != 0:
-			raise Exception(f'Error on request {endpoint} with code {result["error_message"]}')
+			raise Exception(f'Error on request {endpoint} with code \"{result["error_code"]}\"')
 		return result
 	
 	def __reset_pic_id(self):

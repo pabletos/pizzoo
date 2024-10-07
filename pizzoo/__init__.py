@@ -554,26 +554,24 @@ class Pizzoo:
 		attribs = root.attrib
 		brigthness = attribs.get('brightness', None)
 		turn_screen = attribs.get('turnOn', 'false').lower() == 'true'
-		clear = attribs.get('clear', 'true').lower() == 'true'
 		notification = attribs.get('notification', 'false').lower() == 'true'
-		# TODO: This background can be a color, image or gif, if gif every frame should add the template render to the buffer
-		'''background = attribs.get('background', None)
+		background = attribs.get('background', None)
 		if background is not None:
 			try:
 				color = get_color_rgb(background)
 				result.append((self.cls, {'rgb': color}))
 			except ValueError:
 				if background.endswith('.gif'):
-					result.append((self.draw_gif, {'gif_path': background, 'xy': (0, 0), 'size': (64, 64), 'loop': True}))
+					self.draw_gif(background, xy=(0, 0), size=(64, 64), loop=True)
 				else:
 					result.append((self.draw_image, {'image_or_path': background, 'xy': (0, 0), 'size': 'fill-width'}))
-		elif clear is True:
-			result.append((self.cls, {}))'''
+		else:
+			result.append((self.cls, {}))
 		options = {
 			'brigthness': clamp(int(brigthness), 0, 100) if brigthness is not None else None,
-			'clear': clear,
 			'notification': notification,
-			'turn_screen': turn_screen
+			'turn_screen': turn_screen,
+			'background': background
 		}
 		result = result + self.renderer.compile_node_root_options(options)
 		return result
@@ -592,6 +590,13 @@ class Pizzoo:
 			for child in current['node']:
 				pending.append({'node': child, 'parent': current, 'props': props})
 		return commands
+	
+	def execute_commands(self, commands, renderer_items):
+		for command in commands:
+			if callable(command[0]):
+				command[0](**command[1])
+			elif renderer_items is not None:
+				renderer_items.append(command)
 
 	def render_template(self, template, use_cache=False):
 		'''Renders an XML template to the given renderer.
@@ -618,15 +623,16 @@ class Pizzoo:
 		Returns:
 			None
 		'''
-		# TODO: This should depend on the clear property
-		# self.cls()
+		self.reset_buffer()
 		commands = self.__compile_template(template)
 		renderer_items = []
-		for command in commands:
-			if callable(command[0]):
-				command[0](**command[1])
-			else:
-				renderer_items.append(command)
+		if len(self.__buffer) == 0:
+			self.execute_commands(commands, renderer_items)
+		else:
+			self.__current_frame = 0
+			while self.__current_frame < len(self.__buffer):
+				self.execute_commands(commands, renderer_items if self.__current_frame == 0 else None)
+				self.__current_frame += 1
 		self.render()
 		if len(renderer_items) > 0:
 			self.renderer.render_template_items(renderer_items, use_cache)
