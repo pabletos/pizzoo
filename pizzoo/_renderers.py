@@ -8,6 +8,7 @@ from datetime import datetime
 from time import time, sleep
 from PIL import Image, ImageTk
 import tkinter as tk
+from io import BytesIO
 
 class Renderer:
 	_size = None
@@ -484,4 +485,74 @@ class WindowRenderer(Renderer):
 			images = [image.resize((wh, wh), resample=Image.NEAREST) for image in images]
 		self._root.update()
 
-__all__ = (Renderer, Pixoo64Renderer, ImageRenderer, WindowRenderer)
+class Cat_printer_renderer(Renderer):
+	_printer = None
+	def __init__(self, address, pizzoo, debug, model=None, quality=1):
+		self._address = address
+		self._max_frames = 1
+		self._scan_time = 5.0
+		self._timeout = 5.0
+		self._model_name = model
+		self._quality = quality # from 1-4
+		self._printer = self._create_printer()
+		self._size = self._printer.model.paper_width
+		self._debug = debug
+	
+	def _create_printer(self):
+		from .printer import PrinterDriver, Models
+		''' Create a printer object for the model
+		'''
+		if self._model_name is None:
+			raise ValueError('model name is required')
+		model = Models.get(self._model_name)
+		if model is None:
+			raise ValueError('model name is unknown')
+		printer = PrinterDriver()
+		# Required params for printer
+		printer.scan_time = self._scan_time
+		printer.energy = 0x4000
+		printer.speed = 4 * (self._quality + 5)
+		printer.model = model
+		return printer
+	
+	def _connect(self):
+		''' Connect to the printer
+		'''
+		self._printer.connect(self._model_name, self._address)
+
+	def _print(self, buffer: BytesIO):
+		''' Print the buffer
+		'''
+		try:
+			self._printer.print(buffer)
+		except Exception as e:
+			if self._debug: raise e
+			else: print(e)
+		finally:
+			self._printer.unload()
+		
+	def _is_connected(self):
+		''' Check if the printer is connected
+		'''
+		return self._printer.device is not None and self._printer.device.is_connected
+
+	def switch(self, on=True):
+		if on and not self._is_connected():
+			self._connect()
+		else:
+			self._printer.unload()
+
+	def render(self, buffer, frame_speed):
+		''' Render the buffer to the printer
+		'''
+		if not self._is_connected():
+			self._connect()
+		buffer = buffer[0] # doesn't support multiple frames, obviously
+		image = Image.frombytes('RGB', (self._size, self._size), bytes(buffer), 'raw')
+		bw_image = image.convert('1') # convert to black and white
+		buffer_image = BytesIO()
+		bw_image.save(buffer_image, format='PPM')
+		buffer_image.seek(0)
+		self._print(buffer_image)
+
+__all__ = (Renderer, Pixoo64Renderer, ImageRenderer, WindowRenderer, Cat_printer_renderer)

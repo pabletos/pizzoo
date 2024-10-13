@@ -5,3 +5,4 @@ pizzoo.egg-info/
 *.whl
 build.bat
 /docs/site/*
+.vscode/launch.json

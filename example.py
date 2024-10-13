@@ -1,8 +1,8 @@
-from pizzoo import Pizzoo, WindowRenderer, ImageRenderer
+from pizzoo import Pizzoo, WindowRenderer, ImageRenderer, Cat_printer_renderer
 from time import sleep
 
 '''Create the main object and the connection to the Pixoo device'''
-pizzoo = Pizzoo('192.168.50.225', debug=True)
+pizzoo = Pizzoo('4C:10:31:1B:4E:FE', debug=True, renderer=Cat_printer_renderer, renderer_params={'model': 'MX05', 'quality': 4})
 pizzoo.switch(on=True) # Turn on the Pixoo device screen
 
 def example_draw_pixel():
@@ -155,6 +155,14 @@ def example_game():
 	game = ZombieGame(pizzoo)
 	game.start()
 
+def test_printer():
+	'''
+	Test the printer functionality.
+	'''
+	pizzoo.cls((255, 255, 255))
+	pizzoo.draw_image('./files/test_printer.png', xy=(0, 0))
+	pizzoo.render()
+
 if __name__ == '__main__':
 	# create a terminal menu to select the example to run
 	selected_option = None
@@ -170,7 +178,8 @@ if __name__ == '__main__':
 		'9': {'Render an XML template': example_template},
 		'10': {'Render a template with a gif background': example_template_bg},
 		'11': {'Advanced Animation': example_advanced_animation},
-		'12': {'Game': example_game}
+		'12': {'Game': example_game},
+		'13': {'Test Printer (Requires a connected cat printer)': test_printer}
 	}
 	print('Select an example to run:')
 	for key, value in menu.items():

@@ -3,7 +3,7 @@ from PIL import Image, ImageOps
 from math import floor
 from xml.etree.ElementTree import ElementTree, fromstring
 from ._utils import clamp, get_color_rgb
-from ._renderers import Pixoo64Renderer, Renderer, ImageRenderer, WindowRenderer
+from ._renderers import Pixoo64Renderer, Renderer, ImageRenderer, WindowRenderer, Cat_printer_renderer
 from os.path import dirname, realpath, join
 
 class Pizzoo:
@@ -643,4 +643,4 @@ class Pizzoo:
 		raise AttributeError(f"'{self.__class__.__name__}' object has no attribute '{name}'")
 
 
-__all__ = (Pizzoo, Renderer, Pixoo64Renderer, ImageRenderer, WindowRenderer)
+__all__ = (Pizzoo, Renderer, Pixoo64Renderer, ImageRenderer, WindowRenderer, Cat_printer_renderer)
