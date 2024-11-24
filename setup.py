@@ -2,12 +2,12 @@ from setuptools import setup
 from os import path
 
 current_folder = path.abspath(path.dirname(__file__))
-long_description = open('%s\\README.md' % current_folder, encoding='utf-8').read()
+long_description = open(path.join(current_folder, 'README.MD'), encoding='utf-8').read()
 
 # https://packaging.python.org/en/latest/guides/distributing-packages-using-setuptools/
 setup(
     name="pizzoo",
-    version="0.9.12",
+    version="0.9.13",
     author="Pablo Huet",
     description="Pizzoo is a easy-to-use library for rendering on pixel matrix screens like the Pixoo64, featuring easy new device integration, animation tools, and XML template rendering support.",
     long_description=long_description,
