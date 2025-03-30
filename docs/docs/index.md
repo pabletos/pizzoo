@@ -27,7 +27,7 @@ Pizzoo is equipped with a range of features that cater to both hobbyists and pro
 
 	Our built-in compiler supports an XML/HTML-like language for template processing. This facilitates the design of UIs with relative positioning, defined areas, and reusable components, helping you creating fast and reusable interfaces.
 	
-	[:octicons-arrow-right-24: Learn how to render your templates](#)
+	[:octicons-arrow-right-24: Learn how to render your templates](template.md)
 
 -	:fontawesome-solid-gamepad: __Game Development Toolkit__
 

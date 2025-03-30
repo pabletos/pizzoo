@@ -280,7 +280,7 @@ class Pizzoo:
 		font = self.__get_font(font)
 		line_width = self.size if line_width == 'auto' else line_width
 		rgb = get_color_rgb(color)
-		bitmap = font.draw(text, missing='?', linelimit=line_width)
+		bitmap = font.draw(text.strip(), missing='?', linelimit=line_width)
 		if shadow is not None:
 			shadow_rgb = get_color_rgb(shadow_rgb)
 			shadow_displacement = (0, 0)
@@ -531,7 +531,7 @@ class Pizzoo:
 				result = (self.draw_text, {'text': text, 'xy': (abs_x, abs_y), 'color': color, 'shadow': shadow, 'shadow_rgb': shadow_color, 'font': font, 'line_width': line_width})
 		elif tag == 'pixel':
 			color = get_color_rgb(node.attrib.get('color', '7'))
-			result = (self.draw_pixel, {'xy': (abs_x, abs_y), 'rgb': color})
+			result = (self.draw_pixel, {'xy': (abs_x, abs_y), 'color': color})
 		elif tag == 'image':
 			path = node.attrib.get('src', None)
 			# add size

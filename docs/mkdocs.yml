@@ -4,6 +4,7 @@ nav:
   - Installation: installation.md
   - Getting started:
     - Drawing and animating: drawing.md
+    - Rendering a template: template.md
     - Building your first game: game.md
   - Integrate your device: integration.md
   - API reference: api.md
