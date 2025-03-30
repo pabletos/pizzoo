@@ -2,7 +2,7 @@ from setuptools import setup
 from os import path
 
 current_folder = path.abspath(path.dirname(__file__))
-long_description = open('%s\\README.md' % current_folder, encoding='utf-8').read()
+long_description = open(path.join(current_folder, 'README.MD'), encoding='utf-8').read()
 
 # https://packaging.python.org/en/latest/guides/distributing-packages-using-setuptools/
 setup(
