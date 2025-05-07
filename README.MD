@@ -127,7 +127,7 @@ Template rendering provide a lot of options, including self-updating time, date,
 There's also have a dedicated section for this on our docs.
 
 ## Do you want to know more?
-[Here's](pizzoo.pablohuet.com) a dedicated page for documentation with a lot of examples so you can get quickly started.
+[Here's](https://pizzoo.pablohuet.com/) a dedicated page for documentation with a lot of examples so you can get quickly started.
 
 ## Contribute and/or donate
 This library was created and is maintained by a single developer, consider contributing with pull requests, new integrations, proposals or [simply by doing a small donation on ko-fi](https://ko-fi.com/B0B1PYK0W).
