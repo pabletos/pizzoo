@@ -61,12 +61,12 @@ Below is a list of supported tags and their attributes:
 	- `x2`, `y2`: End position of the line.
 	- `color`: Color of the line.
 
-8. **`<message>` (Pixoo64-Specific)**
-	Displays a scrolling message on the screen.
+8. **`<message>` (Pixoo64-Specific)**  
+	Displays a scrolling message on the screen.  
 	**Attributes**:
 	- `x`, `y`: Position of the message.
 	- `color`: Color of the text.
-	- `font`: Font size or type (e.g., `small`, `2`).
+	- `font`: Font size or type , Pixoo64 native fonts can be found [here](https://app.divoom-gz.com/Device/GetTimeDialFontList), default is `2` and if `small` is used it will use the font `18`, any other value will be mapped against the given list. Only fonts with `type=0` from the list will scroll, so they are the recommended ones.
 	- `scroll`: Direction of scrolling (`left` or `right`).
 	- `speed`: Scrolling speed (1–100).
 	**Example**:
@@ -76,24 +76,24 @@ Below is a list of supported tags and their attributes:
 	</message>
 	```
   
-9. **`<time>` (Pixoo64-Specific)**
-	Displays the current time and auto-updates.
+9. **`<time>` (Pixoo64-Specific)**  
+	Displays the current time and auto-updates.  
 	**Attributes**:
 	- `x`, `y`: Position of the time.
 	- `color`: Color of the text.
-	- `font`: Font size or type.
+	- `font`: Font size or type, Pixoo64 native fonts can be found [here](https://app.divoom-gz.com/Device/GetTimeDialFontList), default is `2` and if `small` is used it will use the font `18`, any other value will be mapped against the given list.
 	- `format`: Time format (e.g., `HH:mm:ss`, `HH:mm`, `HH`).
 	**Example**:
 	```xml
 	<time x="10" y="10" color="#FFFFFF" font="2" format="HH:mm:ss" />
 	```
 
-10. **`<temperature>` (Pixoo64-Specific)**
-	Displays the current temperature and auto-updates.
+10. **`<temperature>` (Pixoo64-Specific)**  
+	Displays the current temperature and auto-updates.  
 	**Attributes**:
 	- `x`, `y`: Position of the temperature.
 	- `color`: Color of the text.
-	- `font`: Font size or type.
+	- `font`: Font size or type, Pixoo64 native fonts can be found [here](https://app.divoom-gz.com/Device/GetTimeDialFontList), default is `2` and if `small` is used it will use the font `18`, any other value will be mapped against the given list.
 	- `kind`: Type of temperature to display:
 	- `actual`: Current temperature.
 	- `max`: Maximum temperature of the day.
@@ -103,23 +103,23 @@ Below is a list of supported tags and their attributes:
 	<temperature x="20" y="20" color="#FF0000" font="2" kind="actual" />
 	```
 
-11. **`<weather>` (Pixoo64-Specific)**
-	Displays the current weather condition as text and auto-updates.
+11. **`<weather>` (Pixoo64-Specific)**  
+	Displays the current weather condition as text and auto-updates.  
 	**Attributes**:
 	- `x`, `y`: Position of the weather text.
 	- `color`: Color of the text.
-	- `font`: Font size or type.
+	- `font`: Font size or type, Pixoo64 native fonts can be found [here](https://app.divoom-gz.com/Device/GetTimeDialFontList), default is `2` and if `small` is used it will use the font `18`, any other value will be mapped against the given list.
 	**Example**:
 	```xml
 	<weather x="30" y="30" color="#00FF00" font="2" />
 	```
 
-12. **`<date>` (Pixoo64-Specific)**
-	Displays the current date and auto-updates.
+12. **`<date>` (Pixoo64-Specific)**  
+	Displays the current date and auto-updates.  
 	**Attributes**:
 	- `x`, `y`: Position of the date.
 	- `color`: Color of the text.
-	- `font`: Font size or type.
+	- `font`: Font size or type, Pixoo64 native fonts can be found [here](https://app.divoom-gz.com/Device/GetTimeDialFontList), default is `2` and if `small` is used it will use the font `18`, any other value will be mapped against the given list.
 	- `format`: Date format (e.g., `DD/MM/YYYY`, `DD`, `MM`, `YYYY`).
 	**Example**:
 	```xml
