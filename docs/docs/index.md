@@ -2,7 +2,7 @@
 #
 
 <figure markdown="span">
-![3 pixels](assets/images/pizzoo-banner-nobg.png){ width="450" }
+![3 pixels](assets/images/pizzoo-light.png){ width="450" }
 </figure>
 
 Welcome to the Pizzoo library documentation! Pizzoo is a robust Python library designed for developers who want to unlock the full potential of matrix LED displays, particularly the Pixoo64, a 64x64 pixel LED display, and extend its functionalities to various other devices. Whether you're looking to create dynamic animations, develop interactive games, or integrate unique display functionalities, Pizzoo provides you with the tools and flexibility to innovate and express your creative ideas.
