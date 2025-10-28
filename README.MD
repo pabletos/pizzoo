@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://raw.githubusercontent.com/pabletos/pizzoo/main/docs/docs/assets/images/pizzoo-banner-nobg.png" alt="Pizzoo logo" width="450">
+  <img src="https://raw.githubusercontent.com/pabletos/pizzoo/main/docs/docs/assets/images/pizzoo-light.png" alt="Pizzoo logo" width="450">
 </p>
 <p>
 	<a 
