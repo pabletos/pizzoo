@@ -15,6 +15,8 @@ class Renderer:
 	_debug = False
 	_address = None
 	_pizoo = None
+	_max_frame_speed = 10000  # in ms
+	_min_frame_speed = 10     # in ms
 
 	def __init__(self, address, pizzoo, debug):
 		'''
@@ -41,6 +43,24 @@ class Renderer:
 			int: The maximum amount of frames the device can store.	
 		'''
 		return self._max_frames
+	
+	def get_max_frame_speed(self):
+		'''
+		Returns the maximum frame speed of the device in milliseconds.
+
+		Returns:
+			int: The maximum frame speed of the device in milliseconds.
+		'''
+		return self._max_frame_speed
+	
+	def get_min_frame_speed(self):
+		'''
+		Returns the minimum frame speed of the device in milliseconds.
+
+		Returns:
+			int: The minimum frame speed of the device in milliseconds.
+		'''
+		return self._min_frame_speed
 	
 	def get_settings(self):
 		'''
