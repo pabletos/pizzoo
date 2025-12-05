@@ -20,9 +20,9 @@ setup(
 	package_dir={'pizzoo': 'pizzoo'},
 	package_data={'pizzoo': ['*.bdf']},
     install_requires=[
-        'requests ~= 2.31.0',
-        'Pillow ~= 11.1.0',
-		'bdfparser ~= 2.2.0'
+        'requests >= 2.31.0',
+        'Pillow >= 11.1.0',
+		'bdfparser >= 2.2.0'
     ],
 	classifiers=[
         "Development Status :: 4 - Beta",
