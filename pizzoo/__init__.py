@@ -261,7 +261,7 @@ class Pizzoo:
 			self.__fonts[font_name] = Font(self.__fonts[font_name])
 		return self.__fonts[font_name]
 
-	def draw_text(self, text, xy=(0, 0), font='default', color='#FFFFFF', align=0, line_width='auto', shadow=None, shadow_rgb=(0, 0, 0)):
+	def draw_text(self, text, xy=(0, 0), font='default', color='#FFFFFF', line_width='auto', shadow=None, shadow_rgb=(0, 0, 0)):
 		'''Draws a text on the current frame at the given coordinates.
 
 		Args:
@@ -269,7 +269,6 @@ class Pizzoo:
 			xy (tuple(int | ('center', 'right', 'left), int | ('top', 'center', 'bottom'))): The coordinates of the top-left corner of the text.
 			font (str): The name of the font to use. Default is 'default'.
 			color (tuple(int, int, int) | int | string): The color to draw the text with.
-			align (int): The alignment of the text. 0 is left, 1 is center and 2 is right.
 			shadow (str | tuple | None): The type of shadow to add to the text. Values are 'horizontal', 'vertical', 'diagonal', tuple with displacements, or None.
         	shadow_rgb (tuple(int, int, int) | int | string): The color of the shadow.
 			line_width (int): The maximum width of the text. Default is 'auto'.
